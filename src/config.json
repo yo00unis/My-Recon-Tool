@@ -1,0 +1,6 @@
+{
+	"ResultDirectory":"../ReconResult",
+	"Domain":"crackerjack.com",
+	"Wordlist":"directory-list-2.3-medium.txt",
+	"IsWildCard":"0"
+}
