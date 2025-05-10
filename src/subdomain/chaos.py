@@ -8,5 +8,6 @@ class Chaos:
     
     
     def Execute(self):
-        command = f'chaos -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetAssetFinder()}'
-        return General.ExecuteRealTimeCommand(command, True)
+        command = f'chaos -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetChaos()}'
+        General.ExecuteCommand(command, GlobalEnv.GetChaos(), True)
+        #return General.ExecuteRealTimeCommand(command, True)

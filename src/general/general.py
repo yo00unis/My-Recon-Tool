@@ -186,7 +186,6 @@ class General:
         except Exception as e:
             Logger.log(f"Error running: {str(e)}")
             print(f"Error running: {str(e)}")
-
     
     def ExecuteTesting(self, command:str):
         if len(command) == 0:
@@ -221,6 +220,23 @@ class General:
             process.terminate()
         except Exception as e:
             print(f"Error running: {str(e)}")
+    
+    
+    @staticmethod
+    def ExecuteCommand(command:str, outputFile:str, isForSubDomainEnumeration=False, isForPortScanning = False, isForCrawling=False, isForFuzzing=False):
+        os.system(command)
+        Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+        if isForSubDomainEnumeration:
+            Files.CopyFromTo(outputFile, GlobalEnv.GetSubDomainsPath())
+                        
+        if isForCrawling:
+            Files.CopyFromTo(outputFile, GlobalEnv.GetCrawlingPath())
+        
+        if isForFuzzing:
+            Files.CopyFromTo(outputFile, GlobalEnv.GetFuzzingPath())
+
+        if isForPortScanning:
+            Files.CopyFromTo(outputFile, GlobalEnv.GetPortScanningPath())
     
     @staticmethod
     def GetStrippedString(s:str):

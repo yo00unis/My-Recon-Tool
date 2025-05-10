@@ -14,5 +14,6 @@ class FFUF:
         else:
             url += '/FUZZ'
         command = f'ffuf -u {url} -p 2 -r -w {GlobalEnv.GetFuffWordlist()} -rate 20 -recursion -o {GlobalEnv.GetFFUF()}'
+        General.ExecuteCommand(command, GlobalEnv.GetFFUF(), False, True, False, True)
         return General.ExecuteRealTimeCommand(command, False, True, True, url)
     

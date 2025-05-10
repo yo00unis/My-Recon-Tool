@@ -6,5 +6,5 @@
 	"DoPortScanning":"0",
 	"Ports":"",
 	"DoCrawling":"0",
-	"DoFuzzing":"0"
+	"DoFuzzing":"1"
 }

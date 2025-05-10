@@ -9,4 +9,5 @@ class Sublist3r:
 
     def Execute(self):
         command = f'sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetSublist3r()}'
-        return General.ExecuteRealTimeCommand(command, True)
+        General.ExecuteCommand(command, GlobalEnv.GetSublist3r(), True)
+        #return General.ExecuteRealTimeCommand(command, True)

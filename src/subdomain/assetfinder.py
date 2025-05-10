@@ -10,5 +10,6 @@ class AssetFinder:
     
     
     def Execute(self):
-        command = f'assetfinder {GlobalEnv.GetDomain()}'
-        return General.ExecuteRealTimeCommandAndSaveToFile(command, f'{GlobalEnv.GetAssetFinder()}', 'w', True)
+        command = f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetAssetFinder()}'
+        General.ExecuteCommand(command, GlobalEnv.GetAssetFinder(), True)
+        #return General.ExecuteRealTimeCommandAndSaveToFile(command, f'{GlobalEnv.GetAssetFinder()}', 'w', True)

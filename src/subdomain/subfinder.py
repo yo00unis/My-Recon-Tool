@@ -8,4 +8,5 @@ class Subfinder:
 
     def Execute(self):
         command = f'subfinder -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetSubfinder()}'
-        return General.ExecuteRealTimeCommand(command, True)
+        General.ExecuteCommand(command, GlobalEnv.GetSubfinder(), True)
+        #return General.ExecuteRealTimeCommand(command, True)

@@ -10,5 +10,6 @@ class Gau:
     
     def Execute(self, url):
         command = f'gau {url} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetGau()}'
-        return General.ExecuteRealTimeCommand(command, False, True)
+        General.ExecuteCommand(command, GlobalEnv.GetGau(), False, False, True)
+        #return General.ExecuteRealTimeCommand(command, False, True)
     

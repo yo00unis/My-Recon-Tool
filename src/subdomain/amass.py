@@ -12,4 +12,5 @@ class Amass:
     
     def Execute(self):
         command = f'amass enum -passive -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetAmass()}'
-        return General.ExecuteRealTimeCommand(command, True)
+        General.ExecuteCommand(command, GlobalEnv.GetAmass(), True)
+        #return General.ExecuteRealTimeCommand(command, True)

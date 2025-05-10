@@ -8,6 +8,7 @@ class Waybackurls:
         pass
     
     def Execute(self):
-        command = f'waybackurls {GlobalEnv.GetDomain()}'
-        return General.ExecuteRealTimeCommandAndSaveToFile(command, f'{GlobalEnv.GetWaybackurls()}', 'a', False, True)
+        command = f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetWaybackurls()}'
+        General.ExecuteCommand(command, GlobalEnv.GetWaybackurls(), False, False, True)
+        #return General.ExecuteRealTimeCommandAndSaveToFile(command, f'{GlobalEnv.GetWaybackurls()}', 'a', False, True)
     

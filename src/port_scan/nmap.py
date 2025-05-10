@@ -13,5 +13,6 @@ class Nmap:
         if len(ports) > 0:
             command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetNmap()}'
         else:    
-            command = f'nmap -sA -sU --top-ports 10000 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetNmap()}'
-        return General.ExecuteRealTimeCommand(command, False, False, False, '', True)
+            command = f'nmap -sA -sU --top-ports 1000 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetNmap()}'
+        General.ExecuteCommand(command, GlobalEnv.GetNmap(), False, True)
+        #return General.ExecuteRealTimeCommand(command, False, False, False, '', True)

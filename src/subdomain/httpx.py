@@ -8,4 +8,5 @@ class HTTPx:
     
     def Execute(self):
         command = f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -title -tech-detect -follow-redirects -o {GlobalEnv.GetHttpx()}'
-        return General.ExecuteRealTimeCommand(command)
+        General.ExecuteCommand(command, GlobalEnv.GetHttpx())
+        #return General.ExecuteRealTimeCommand(command)

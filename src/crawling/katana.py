@@ -11,7 +11,8 @@ class Katana:
 
     def Execute(self, url):
         command = f'katana -u {General.GetStrippedString(url)} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetKatana()}'
-        return General.ExecuteRealTimeCommand(command, False, True)
+        General.ExecuteCommand(command, GlobalEnv.GetKatana(), False, False, True)
+        #return General.ExecuteRealTimeCommand(command, False, True)
     
 
         
