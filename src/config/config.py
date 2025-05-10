@@ -48,6 +48,7 @@ class Config:
         GlobalEnv.SetDomain(data["Domain"])
         GlobalEnv.SetFuffWordlist(data["Wordlist"])
         GlobalEnv.SetIsWildCard(data["IsWildCard"])
+        GlobalEnv.SetPorts(data["Ports"])
 
         if len(GlobalEnv.GetResultFolder().strip()) == 0:
             General.ReadResultDirectory()

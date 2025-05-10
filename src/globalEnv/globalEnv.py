@@ -33,6 +33,7 @@ class GlobalEnv:
     __assetFinder = f''
     __waymore = f''
     __isWildCard = True
+    __ports = f''
     
     @staticmethod
     def SetResultFolder(   rf):
@@ -57,7 +58,6 @@ class GlobalEnv:
         return GlobalEnv.__Domain
     
     @staticmethod
-     
     def SetLogFile(   lf):
         from general.general import General
          
@@ -66,6 +66,15 @@ class GlobalEnv:
     @staticmethod
     def GetLogFile( ):
         return GlobalEnv.__LogFile
+    
+    @staticmethod
+    def SetPorts(lf):
+        from general.general import General
+        GlobalEnv.__ports = General.GetStrippedString(lf) 
+    
+    @staticmethod
+    def GetPorts( ):
+        return GlobalEnv.__ports
     
     @staticmethod
     def SetIsWildCard(lf):

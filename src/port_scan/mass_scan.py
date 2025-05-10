@@ -3,8 +3,6 @@ from  general.general import General
 from  globalEnv.globalEnv import GlobalEnv
 import socket
 
-from shared.shared import Shared
-
 class Masscan:
     
     
@@ -21,5 +19,9 @@ class Masscan:
             return None
             
     def Execute(self, domain:str):
-        command = f'masscan {str(self.__get_ip(General.GetStrippedString(domain)))} -p0-65535'
+        ports = GlobalEnv.GetPorts()
+        if len(ports) > 0:
+            command = f'masscan {str(self.__get_ip(General.GetStrippedString(domain)))} -p {ports}'
+        else:    
+            command = f'masscan {str(self.__get_ip(General.GetStrippedString(domain)))} --top-ports 100'
         return General.ExecuteRealTimeCommandAndSaveToFile(command, f'{GlobalEnv.GetMasscan()}', 'w', False, False, False, '', True)

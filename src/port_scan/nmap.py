@@ -1,7 +1,6 @@
 
 from  general.general import General
 from  globalEnv.globalEnv import GlobalEnv
-from shared.shared import Shared
 
 class Nmap:
     
@@ -10,5 +9,9 @@ class Nmap:
         pass
     
     def Execute(self, domain:str):
-        command = f'nmap {General.GetStrippedString(domain)}-oN {GlobalEnv.GetNmap()}'
+        ports = GlobalEnv.GetPorts()
+        if len(ports) > 0:
+            command = f'nmap -p {ports} -A {General.GetStrippedString(domain)} -oN {GlobalEnv.GetNmap()}'
+        else:    
+            command = f'nmap --top-ports 1000 {General.GetStrippedString(domain)} -oN {GlobalEnv.GetNmap()}'
         return General.ExecuteRealTimeCommand(command, False, False, False, '', True)
