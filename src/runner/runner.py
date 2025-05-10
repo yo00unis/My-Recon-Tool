@@ -15,11 +15,14 @@ class Runner:
             subdomainEnumerationBase = SubdomainEnumerationBase()
             subdomainEnumerationBase.Exexute()
 
-        portScanningBase = PortScanningBase()
-        portScanningBase.Exexute()
+        if GlobalEnv.GetDoPortScanning():
+            portScanningBase = PortScanningBase()
+            portScanningBase.Exexute()
 
-        crawlingBase = CrawlingBase()
-        crawlingBase.Exexute()
+        if GlobalEnv.GetDoCrawling():
+            crawlingBase = CrawlingBase()
+            crawlingBase.Exexute()
 
-        fuzzingBase = FuzzingBase()
-        fuzzingBase.Exexute()
+        if GlobalEnv.GetDoFuzzing():
+            fuzzingBase = FuzzingBase()
+            fuzzingBase.Exexute()

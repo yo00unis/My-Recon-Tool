@@ -3,5 +3,8 @@
 	"Domain":"crackerjack.com",
 	"Wordlist":"directory-list-2.3-medium.txt",
 	"IsWildCard":"0",
-	"Ports":""
+	"DoPortScanning":"0",
+	"Ports":"",
+	"DoCrawling":"0",
+	"DoFuzzing":"0"
 }

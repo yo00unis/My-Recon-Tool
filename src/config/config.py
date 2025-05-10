@@ -49,6 +49,9 @@ class Config:
         GlobalEnv.SetFuffWordlist(data["Wordlist"])
         GlobalEnv.SetIsWildCard(data["IsWildCard"])
         GlobalEnv.SetPorts(data["Ports"])
+        GlobalEnv.SetDoPortScanning(data["DoPortScanning"])
+        GlobalEnv.SetDoCrawling(data["DoCrawling"])
+        GlobalEnv.SetDoFuzzing(data["DoFuzzing"])
 
         if len(GlobalEnv.GetResultFolder().strip()) == 0:
             General.ReadResultDirectory()
@@ -114,6 +117,7 @@ class Config:
         # Set port scanning result files
         GlobalEnv.SetNmap(f"{GlobalEnv.GetResultFolder()}portScanning/nmap.txt")
         GlobalEnv.SetMasscan(f"{GlobalEnv.GetResultFolder()}portScanning/masscan.txt")
+        GlobalEnv.SetPortScanningTarget(f"{GlobalEnv.GetResultFolder()}portScanning/target.txt")
 
     @staticmethod
     def __CheckIsWildcardConfig():

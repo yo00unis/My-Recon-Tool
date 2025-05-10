@@ -1,4 +1,5 @@
 import os
+import socket
 from urllib.parse import urlparse
 from  files.files import Files
 import platform
@@ -15,6 +16,15 @@ class General:
     
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
+    @staticmethod
+    def getIPfromDomain(domain):
+        try:
+            ip = socket.gethostbyname(domain)
+            return ip
+        except socket.gaierror as e:
+            print(f"Error resolving {domain}: {e}")
+            return None
+    
     
     def IsDomainValid(self, domain):
         return bool(re.fullmatch(self.__domainPattern, domain))

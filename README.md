@@ -100,7 +100,7 @@ python -m venv .venv
 
 pip install -r requirements.txt
 
-## 🏃 Running the Tool
+### 🏃 Running the Tool
 
 ### **Windows**
 ```cmd
