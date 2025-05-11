@@ -82,7 +82,14 @@ class General:
     @staticmethod
     def ExecuteCommand(command:str, outputFile:str, isForSubDomainEnumeration=False, isForPortScanning = False, isForCrawling=False, isForFuzzing=False):
         os.system(command)
+        
+        if not isForFuzzing:
+            Files.CopyFromTo(GlobalEnv.GetTempFile(), outputFile)
+        else:
+            Files.CopyFromTo(GlobalEnv.GetTempJson(), outputFile)
+            
         Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+            
         if isForSubDomainEnumeration:
             Files.CopyFromTo(outputFile, GlobalEnv.GetSubDomainsPath())
                         

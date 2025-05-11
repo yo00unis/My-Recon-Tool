@@ -33,6 +33,8 @@ class GlobalEnv:
     __doFuzzing = True
     __ports = f""
     __portScanningTarget = f""
+    __tempFile = f""
+    __tempJson = f""
 
 
     @staticmethod
@@ -56,6 +58,25 @@ class GlobalEnv:
     @staticmethod
     def GetDomain():
         return GlobalEnv.__Domain
+    
+    @staticmethod
+    def SetTempFile(d: str):
+        from general import General
+        GlobalEnv.__tempFile = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetTempFile():
+        return GlobalEnv.__tempFile
+
+    @staticmethod
+    def SetTempJson(d: str):
+        from general import General
+        GlobalEnv.__tempJson = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetTempJson():
+        return GlobalEnv.__tempJson
+
 
     @staticmethod
     def SetLogFile(lf):

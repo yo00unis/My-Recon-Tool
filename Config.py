@@ -118,6 +118,10 @@ class Config:
         GlobalEnv.SetNmap(f"{GlobalEnv.GetResultFolder()}portScanning/nmap.txt")
         GlobalEnv.SetMasscan(f"{GlobalEnv.GetResultFolder()}portScanning/masscan.txt")
         GlobalEnv.SetPortScanningTarget(f"{GlobalEnv.GetResultFolder()}portScanning/target.txt")
+        
+        # Set temp file
+        GlobalEnv.SetTempFile(f'{GlobalEnv.GetResultFolder()}temp.txt')
+        GlobalEnv.SetTempJson(f'{GlobalEnv.GetResultFolder()}temp.json')
 
     @staticmethod
     def __CheckIsWildcardConfig():

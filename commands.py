@@ -10,56 +10,56 @@ class Commands:
     @staticmethod
     def SubfinderCommands():    
         commands = [
-            f'subfinder -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetSubfinder()}'
+            f'subfinder -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def Sublist3rCommands():    
         commands = [
-            f"sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetSublist3r()}"
+            f"sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetTempFile()}"
         ]
         return commands
     
     @staticmethod
     def AmassCommands():    
         commands = [
-            f'amass enum -passive -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetAmass()}'
+            f'amass enum -passive -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def AssetFinderCommands():    
         commands = [
-            f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetAssetFinder()}'
+            f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def ChaosCommands():    
         commands = [
-            f'chaos -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetChaos()}'
+            f'chaos -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def HttpxCommands():    
         commands = [
-            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -title -tech-detect -follow-redirects -o {GlobalEnv.GetHttpx()}'
+            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -title -tech-detect -follow-redirects -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def KatanaCommands(url):    
         commands = [
-           f'katana -u {General.GetStrippedString(url)} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetKatana()}'
+           f'katana -u {General.GetStrippedString(url)} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
     @staticmethod
     def GauCommands(url):    
         commands = [
-           f'gau {url} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetGau()}'
+           f'gau {url} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
@@ -73,7 +73,7 @@ class Commands:
     @staticmethod
     def WaybackurlsCommands():    
         commands = [
-           f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetWaybackurls()}'
+           f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
@@ -82,10 +82,10 @@ class Commands:
         commands = []
         ports = GlobalEnv.GetPorts()
         if len(ports) > 0:
-            command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetNmap()}'
+            command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetTempFile()}'
             commands.append(command)
         else:    
-            command = f'nmap -sA -sU --top-ports 100 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetNmap()}'
+            command = f'nmap -sA -sU --top-ports 100 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetTempFile()}'
             commands.append(command)
             
         return commands
@@ -95,10 +95,10 @@ class Commands:
         commands = []
         ports = GlobalEnv.GetPorts()
         if len(ports) > 0:
-            command = f'masscan -iL {GlobalEnv.GetPortScanningTarget()} -p {ports} > {GlobalEnv.GetMasscan()}'
+            command = f'masscan -iL {GlobalEnv.GetPortScanningTarget()} -p {ports} > {GlobalEnv.GetTempFile()}'
             commands.append(command)
         else:    
-            command = f'masscan -p1-65535 -iL {GlobalEnv.GetPortScanningTarget()} > {GlobalEnv.GetMasscan()}'  
+            command = f'masscan -p1-65535 -iL {GlobalEnv.GetPortScanningTarget()} > {GlobalEnv.GetTempFile()}'  
             commands.append(command)
             
         return commands
@@ -111,7 +111,7 @@ class Commands:
             url += '/FUZZ'
               
         commands = [
-           f'ffuf -u {url} -p 2 -r -w {GlobalEnv.GetFuffWordlist()} -rate 20 -recursion -o {GlobalEnv.GetFFUF()}'
+           f'ffuf -u {url} -p 2 -r -w {GlobalEnv.GetFuffWordlist()} -rate 20 -recursion -o {GlobalEnv.GetTempJson()}'
         ]
         return commands
     
