@@ -13,7 +13,7 @@ class Runner:
         Config.LoadConfig()
 
     def Execute(self):
-        if GlobalEnv.GetIsWildcard():
+        if GlobalEnv.GetDoSubdomainEnumeration():
             subdomainEnumeration = SubdomainEnumeration()
             subdomainEnumeration.Execute()
 

@@ -46,7 +46,7 @@ class Config:
         Config.__DealingWithDirectoryConfig(str(data["ResultDirectory"]))
         GlobalEnv.SetDomain(data["Domain"])
         GlobalEnv.SetFuffWordlist(data["FuzzingWordlist"])
-        GlobalEnv.SetIsWildCard(data["IsWildCard"])
+        GlobalEnv.SetDoSubdomainEnumeration(data["DoSubdomainEnumeration"])
         GlobalEnv.SetPorts(data["Ports"])
         GlobalEnv.SetDoPortScanning(data["DoPortScanning"])
         GlobalEnv.SetDoCrawling(data["DoCrawling"])
@@ -124,14 +124,14 @@ class Config:
         GlobalEnv.SetTempJson(f'{GlobalEnv.GetResultFolder()}temp.json')
 
     @staticmethod
-    def __CheckIsWildcardConfig():
+    def __CheckDoSubdomainEnumerationConfig():
         # append domain to httpx if config domain not wildcard
-        if not GlobalEnv.GetIsWildcard():
+        if not GlobalEnv.GetDoSubdomainEnumeration():
             Files.WriteToFile(GlobalEnv.GetHttpx(), "w", GlobalEnv.GetDomain())
 
     @staticmethod
     def LoadConfig():
         Config.__ReadConfigFile()
         Config.__SetGlobalEnv()
-        Config.__CheckIsWildcardConfig()
+        Config.__CheckDoSubdomainEnumerationConfig()
         Config.__InitialMessage()

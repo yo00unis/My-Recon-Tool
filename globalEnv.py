@@ -27,7 +27,7 @@ class GlobalEnv:
     __theHarvester = f""
     __assetFinder = f""
     __waymore = f""
-    __isWildCard = True
+    __DoSubdomainEnumeration = True
     __doPortScanning = True
     __doCrawling = True
     __doFuzzing = True
@@ -109,17 +109,17 @@ class GlobalEnv:
         return GlobalEnv.__ports
 
     @staticmethod
-    def SetIsWildCard(lf):
+    def SetDoSubdomainEnumeration(lf):
         from general import General
 
         if General.GetStrippedString(lf) == "1":
-            GlobalEnv.__isWildCard = True
+            GlobalEnv.__DoSubdomainEnumeration = True
         else:
-            GlobalEnv.__isWildCard = False
+            GlobalEnv.__DoSubdomainEnumeration = False
 
     @staticmethod
-    def GetIsWildcard():
-        return GlobalEnv.__isWildCard
+    def GetDoSubdomainEnumeration():
+        return GlobalEnv.__DoSubdomainEnumeration
 
     @staticmethod
     def SetDoPortScanning(rf):

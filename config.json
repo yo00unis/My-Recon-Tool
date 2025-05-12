@@ -1,7 +1,7 @@
 {
 	"ResultDirectory":"ReconResult",
 	"Domain":"crackerjack.com",
-	"IsWildCard":"1",
+	"DoSubdomainEnumeration":"1",
 	"DoPortScanning":"1",
 	"Ports":"",
 	"DoCrawling":"1",
