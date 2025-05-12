@@ -45,27 +45,27 @@ class Config:
 
         Config.__DealingWithDirectoryConfig(str(data["ResultDirectory"]))
         GlobalEnv.SetDomain(data["Domain"])
-        GlobalEnv.SetFuffWordlist(data["Wordlist"])
+        GlobalEnv.SetFuffWordlist(data["FuzzingWordlist"])
         GlobalEnv.SetIsWildCard(data["IsWildCard"])
         GlobalEnv.SetPorts(data["Ports"])
         GlobalEnv.SetDoPortScanning(data["DoPortScanning"])
         GlobalEnv.SetDoCrawling(data["DoCrawling"])
         GlobalEnv.SetDoFuzzing(data["DoFuzzing"])
 
-        if len(GlobalEnv.GetResultFolder().strip()) == 0:
+        if len(GlobalEnv.GetResultFolder()) == 0:
             General.ReadResultDirectory()
-        if len(GlobalEnv.GetDomain().strip()) == 0:
+        if len(GlobalEnv.GetDomain()) == 0:
             General.ReadDomain()
-        if len(GlobalEnv.GetFuffWordlist().strip()) == 0:
+        if len(GlobalEnv.GetFuffWordlist()) == 0 and not GlobalEnv.GetDoFuzzing():
             General.ReadFFUFwordlist()
 
     @staticmethod
     def __InitialMessage():
-        # Logger.logAndPrintToConsole("--------------------------------")
-        # Logger.logAndPrintToConsole("Created By Younis 2003")
-        # Logger.logAndPrintToConsole("--------------------------------")
-        # Logger.logAndPrintToConsole("if you want to exit tool press Ctrl + c")
-        # Logger.logAndPrintToConsole("--------------------------------")
+        print("--------------------------------")
+        print("Created By Younis 2003")
+        print("--------------------------------")
+        print("if you want to exit tool press Ctrl + c")
+        print("--------------------------------")
         pass
 
     @staticmethod
