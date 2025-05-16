@@ -12,7 +12,7 @@ class PortScanning:
         try:
             httpxlines = Files.GetNumberOfLines(GlobalEnv.GetHttpx())
             if httpxlines == 0 or httpxlines == 1:
-                if Files.IsFileExists(GlobalEnv.GetSubDomainsPath):
+                if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
                     Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
             with open(
                 f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
@@ -41,9 +41,16 @@ class PortScanning:
     def __Nmap(self):
         commands = Commands.NmapCommands()
         for c in commands:
-            General.ExecuteCommand(c, GlobalEnv.GetMasscan(), False, True)
+            General.ExecuteCommand(c, GlobalEnv.GetNmap(), False, True)
+
+    def __Naabu(self):
+        commands = Commands.NaabuCommands()
+        for c in commands:
+            General.ExecuteCommand(c, GlobalEnv.GetNaabu(), False, True)
+
 
     def Execute(self):
         self.__ExportHttpxResultsToTargetFile()
         # self.__Masscan()
         # self.__Nmap()
+        self.__Naabu()

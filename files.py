@@ -103,7 +103,7 @@ class Files:
     @staticmethod
     def WriteToFile(path, mode, line:str):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
-            f.write(line)
+            f.write(f'{line}\n')
             
     @staticmethod
     def WriteListToFile(path, mode, lines:list):

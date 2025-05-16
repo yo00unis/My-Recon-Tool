@@ -104,6 +104,17 @@ class Commands:
         return commands
     
     @staticmethod
+    def NaabuCommands():  
+        commands = []
+        ports = GlobalEnv.GetPorts()
+        if len(ports)>0:
+            command = f'naabu -l {GlobalEnv.GetPortScanningTarget()} -p {ports} -o {GlobalEnv.GetTempFile()}'
+        else:
+            command = f'naabu -l {GlobalEnv.GetPortScanningTargetDomains()} -top-ports 1000 -o {GlobalEnv.GetTempFile()}'
+        commands.append(command)
+        return commands
+    
+    @staticmethod
     def FFUFCommands(url):  
         if url.endswith('/'):
             url += 'FUZZ'

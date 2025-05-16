@@ -1,7 +1,7 @@
 {
 	"ResultDirectory":"ReconResult",
 	"Domain":"juice-shop.herokuapp.com",
-	"DoSubdomainEnumeration":"1",
+	"DoSubdomainEnumeration":"0",
 	"DoPortScanning":"1",
 	"Ports":"",
 	"DoCrawling":"0",

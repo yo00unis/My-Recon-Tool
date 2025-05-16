@@ -36,6 +36,7 @@ class GlobalEnv:
     __portScanningTargetDomains = f""
     __tempFile = f""
     __tempJson = f""
+    __naabu = f""
 
 
     @staticmethod
@@ -59,6 +60,16 @@ class GlobalEnv:
     @staticmethod
     def GetDomain():
         return GlobalEnv.__Domain
+    
+    @staticmethod
+    def SetNaabu(d: str):
+        from general import General
+
+        GlobalEnv.__naabu = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetNaabu():
+        return GlobalEnv.__naabu
     
     @staticmethod
     def SetTempFile(d: str):
