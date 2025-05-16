@@ -8,6 +8,16 @@ class Files:
         pass
     
     @staticmethod
+    def IsFileEmpty(path):
+        return os.path.getsize(path) == 0
+    
+    @staticmethod
+    def GetNumberOfLines(path):
+        with open(f'{path}', 'r') as file:
+            return len(file.readlines())
+        return 0
+    
+    @staticmethod
     def GetWorkingDirectory():
         return os.getcwd() 
     

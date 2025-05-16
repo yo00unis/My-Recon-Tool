@@ -37,9 +37,7 @@ class Config:
 
     @staticmethod
     def __ReadConfigFile():
-        conf = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), f"config.json")
-        )
+        conf = os.path.abspath(os.path.join(os.path.dirname(__file__), f"config.json"))
         with open(f"{conf}", "r") as file:
             data = load(file)
 
@@ -117,17 +115,21 @@ class Config:
         # Set port scanning result files
         GlobalEnv.SetNmap(f"{GlobalEnv.GetResultFolder()}portScanning/nmap.txt")
         GlobalEnv.SetMasscan(f"{GlobalEnv.GetResultFolder()}portScanning/masscan.txt")
-        GlobalEnv.SetPortScanningTarget(f"{GlobalEnv.GetResultFolder()}portScanning/target.txt")
-        
+        GlobalEnv.SetPortScanningTarget(
+            f"{GlobalEnv.GetResultFolder()}portScanning/target.txt"
+        )
+        GlobalEnv.SetPortScanningTargetDomains(
+            f"{GlobalEnv.GetResultFolder()}portScanning/targetDomain.txt"
+        )
+
         # Set temp file
-        GlobalEnv.SetTempFile(f'{GlobalEnv.GetResultFolder()}temp.txt')
-        GlobalEnv.SetTempJson(f'{GlobalEnv.GetResultFolder()}temp.json')
+        GlobalEnv.SetTempFile(f"{GlobalEnv.GetResultFolder()}temp.txt")
+        GlobalEnv.SetTempJson(f"{GlobalEnv.GetResultFolder()}temp.json")
 
     @staticmethod
     def __CheckDoSubdomainEnumerationConfig():
         # append domain to httpx if config domain not wildcard
-        if not GlobalEnv.GetDoSubdomainEnumeration():
-            Files.WriteToFile(GlobalEnv.GetHttpx(), "w", GlobalEnv.GetDomain())
+        Files.WriteToFile(GlobalEnv.GetHttpx(), "a", GlobalEnv.GetDomain())
 
     @staticmethod
     def LoadConfig():

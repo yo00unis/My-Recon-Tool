@@ -2,7 +2,6 @@
 from general import General
 from globalEnv import GlobalEnv
 
-
 class Commands:
     def __init__(self):
         pass
@@ -45,7 +44,8 @@ class Commands:
     @staticmethod
     def HttpxCommands():    
         commands = [
-            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -title -tech-detect -follow-redirects -o {GlobalEnv.GetTempFile()}'
+            #f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -title -tech-detect -follow-redirects -o {GlobalEnv.GetTempFile()}'
+            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
