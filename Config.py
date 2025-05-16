@@ -115,6 +115,7 @@ class Config:
         # Set port scanning result files
         GlobalEnv.SetNmap(f"{GlobalEnv.GetResultFolder()}portScanning/nmap.txt")
         GlobalEnv.SetMasscan(f"{GlobalEnv.GetResultFolder()}portScanning/masscan.txt")
+        GlobalEnv.SetNaabu(f"{GlobalEnv.GetResultFolder()}portScanning/naabu.txt")
         GlobalEnv.SetPortScanningTarget(
             f"{GlobalEnv.GetResultFolder()}portScanning/target.txt"
         )
