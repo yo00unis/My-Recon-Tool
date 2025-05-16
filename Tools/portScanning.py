@@ -51,6 +51,6 @@ class PortScanning:
 
     def Execute(self):
         self.__ExportHttpxResultsToTargetFile()
-        # self.__Masscan()
-        # self.__Nmap()
+        self.__Masscan()
+        self.__Nmap()
         self.__Naabu()

@@ -48,10 +48,10 @@ class SubdomainEnumeration:
     
     
     def Execute(self):
-        # self.__Subfinder()
-        # self.__Sublist3r()
-        # self.__AssetFinder()
-        # self.__Chaos()
-        # self.__Amass()
-        # self.__CrtSh()
+        self.__Subfinder()
+        self.__Sublist3r()
+        self.__AssetFinder()
+        self.__Chaos()
+        self.__Amass()
+        self.__CrtSh()
         self.__Httpx()
