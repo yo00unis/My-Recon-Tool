@@ -14,7 +14,7 @@ class PortScanning:
             if httpxlines == 0 or httpxlines == 1:
                 if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
                     Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
-            Files.RemoveDuplicateFromDile(GlobalEnv.GetHttpx())
+            Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
             with open(
                 f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
             ) as f:
@@ -31,6 +31,8 @@ class PortScanning:
                         "a",
                         domain,
                     )
+            Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
+            Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
         except Exception as e:
             print(f"Error running: {str(e)}")
 

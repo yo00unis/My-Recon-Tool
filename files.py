@@ -113,7 +113,7 @@ class Files:
                 f.write(f'{l}\n')
     
     @staticmethod
-    def RemoveDuplicateFromDile(path):
+    def RemoveDuplicateFromFile(path):
         seen = set()
         unique_lines = []
 

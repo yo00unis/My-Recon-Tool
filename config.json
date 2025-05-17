@@ -1,10 +1,10 @@
 {
 	"ResultDirectory":"ReconResult",
-	"Domain":"hackerone.com",
+	"Domain":"giotto.de",
 	"DoSubdomainEnumeration":"1",
-	"DoPortScanning":"0",
+	"DoPortScanning":"1",
 	"Ports":"",
-	"DoCrawling":"0",
+	"DoCrawling":"1",
 	"DoFuzzing":"0",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt"
 }
