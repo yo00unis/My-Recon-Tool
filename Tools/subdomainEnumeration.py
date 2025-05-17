@@ -19,6 +19,7 @@ class SubdomainEnumeration:
         if response.status_code == 200:
             domains = General.ExtractDomainsFromJsonFile(GlobalEnv.GetCrtSH())
             Files.WriteListToFile(GlobalEnv.GetSubDomainsPath(), 'a', domains)
+            Files.WriteListToFile(GlobalEnv.GetCrtShText(), 'w', domains)
     
     def __Subfinder(self):
         commands = Commands.SubfinderCommands()
@@ -58,5 +59,5 @@ class SubdomainEnumeration:
         self.__Sublist3r()
         self.__AssetFinder()
         self.__Chaos()
-        self.__Amass()
+        #self.__Amass()
         self.__Httpx()

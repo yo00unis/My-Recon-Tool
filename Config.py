@@ -96,6 +96,7 @@ class Config:
             f"{GlobalEnv.GetResultFolder()}subdomains/theHarvester"
         )
         GlobalEnv.SetCrtSH(f"{GlobalEnv.GetResultFolder()}subdomains/crtSH.json")
+        GlobalEnv.SetCrtShText(f"{GlobalEnv.GetResultFolder()}subdomains/crtSHtext.txt")
         GlobalEnv.SetSubfinder(f"{GlobalEnv.GetResultFolder()}subdomains/subfinder.txt")
         GlobalEnv.SetSublist3r(f"{GlobalEnv.GetResultFolder()}subdomains/sublist3r.txt")
         GlobalEnv.SetHttpx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx.txt")
@@ -135,6 +136,7 @@ class Config:
 
     @staticmethod
     def LoadConfig():
+        Config.__InitialMessage()
         Config.__ReadConfigFile()
         Config.__SetGlobalEnv()
         Config.__CheckDoSubdomainEnumerationConfig()

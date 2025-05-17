@@ -16,6 +16,7 @@ class GlobalEnv:
     __Gau = f""
     __GoSpider = f""
     __CrtSH = f""
+    __CrtSHText = f""
     __ffuf = f""
     __ffufWordlist = f""
     __crawlingPath = f""
@@ -38,7 +39,223 @@ class GlobalEnv:
     __tempJson = f""
     __naabu = f""
 
+    # port scanning tools
+    @staticmethod
+    def SetNmap(rf):
+        from general import General
 
+        GlobalEnv.__nmap = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetNmap():
+        return GlobalEnv.__nmap
+
+    @staticmethod
+    def SetNaabu(d: str):
+        from general import General
+
+        GlobalEnv.__naabu = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetNaabu():
+        return GlobalEnv.__naabu
+
+    @staticmethod
+    def SetMasscan(rf):
+        from general import General
+
+        GlobalEnv.__masscan = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetMasscan():
+        return GlobalEnv.__masscan
+
+    # subdomain enumeration tools
+    @staticmethod
+    def SetCrtSH(rf):
+        from general import General
+
+        GlobalEnv.__CrtSH = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetCrtSH():
+        return GlobalEnv.__CrtSH
+
+    @staticmethod
+    def SetCrtShText(d: str):
+        from general import General
+
+        GlobalEnv.__CrtSHText = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetCrtShText():
+        return GlobalEnv.__CrtSHText
+
+    @staticmethod
+    def SetAssetFinder(lf):
+        from general import General
+
+        GlobalEnv.__assetFinder = General.GetStrippedString(lf)
+
+    @staticmethod
+    def GetAssetFinder():
+        return GlobalEnv.__assetFinder
+
+    @staticmethod
+    def SetSubfinder(rf):
+        from general import General
+
+        GlobalEnv.__SubFinder = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetSubfinder():
+        return GlobalEnv.__SubFinder
+
+    @staticmethod
+    def SetSublist3r(rf):
+        from general import General
+
+        GlobalEnv.__Sublist3r = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetSublist3r():
+        return GlobalEnv.__Sublist3r
+
+    @staticmethod
+    def SetChaos(rf):
+        from general import General
+
+        GlobalEnv.__Chaos = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetChaos():
+        return GlobalEnv.__Chaos
+
+    @staticmethod
+    def SetAmass(rf):
+        from general import General
+
+        GlobalEnv.__amass = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetAmass():
+        return GlobalEnv.__amass
+
+    @staticmethod
+    def SettheHarvester(rf):
+        from general import General
+
+        GlobalEnv.__theHarvester = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GettheHarvester():
+        return GlobalEnv.__theHarvester
+
+    @staticmethod
+    def SetHttpx(rf):
+        from general import General
+
+        GlobalEnv.__Httpx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetHttpx():
+        return GlobalEnv.__Httpx
+
+    # crawling tools
+    @staticmethod
+    def SetWaybackurls(rf):
+        from general import General
+
+        GlobalEnv.__Waybackurls = General.GetStrippedString(rf)
+
+    @staticmethod
+    def SetWaymore(lf):
+        from general import General
+
+        GlobalEnv.__waymore = General.GetStrippedString(lf)
+
+    @staticmethod
+    def GetWaymore():
+        return GlobalEnv.__waymore
+
+    @staticmethod
+    def GetWaybackurls():
+        return GlobalEnv.__Waybackurls
+
+    @staticmethod
+    def SetKatana(rf):
+        from general import General
+
+        GlobalEnv.__Katana = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetKatana():
+        return GlobalEnv.__Katana
+
+    @staticmethod
+    def SetGau(rf):
+        from general import General
+
+        GlobalEnv.__Gau = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetGau():
+        return GlobalEnv.__Gau
+
+    @staticmethod
+    def SetGoSpider(rf):
+        from general import General
+
+        GlobalEnv.__GoSpider = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetGoSpider():
+        return GlobalEnv.__GoSpider
+
+    # fuzzing tools
+    @staticmethod
+    def SetFFUF(rf):
+        from general import General
+
+        GlobalEnv.__ffuf = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetFFUF():
+        return GlobalEnv.__ffuf
+
+    # log file
+    @staticmethod
+    def SetLogFile(lf):
+        from general import General
+
+        GlobalEnv.__LogFile = General.GetStrippedString(lf)
+
+    @staticmethod
+    def GetLogFile():
+        return GlobalEnv.__LogFile
+
+    # temp files
+    @staticmethod
+    def SetTempFile(d: str):
+        from general import General
+
+        GlobalEnv.__tempFile = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetTempFile():
+        return GlobalEnv.__tempFile
+
+    @staticmethod
+    def SetTempJson(d: str):
+        from general import General
+
+        GlobalEnv.__tempJson = General.GetStrippedString(d)
+
+    @staticmethod
+    def GetTempJson():
+        return GlobalEnv.__tempJson
+
+    # config
     @staticmethod
     def SetResultFolder(rf):
         if not rf.endswith("/"):
@@ -60,54 +277,16 @@ class GlobalEnv:
     @staticmethod
     def GetDomain():
         return GlobalEnv.__Domain
-    
-    @staticmethod
-    def SetNaabu(d: str):
-        from general import General
 
-        GlobalEnv.__naabu = General.GetStrippedString(d)
-
-    @staticmethod
-    def GetNaabu():
-        return GlobalEnv.__naabu
-    
-    @staticmethod
-    def SetTempFile(d: str):
-        from general import General
-        GlobalEnv.__tempFile = General.GetStrippedString(d)
-
-    @staticmethod
-    def GetTempFile():
-        return GlobalEnv.__tempFile
-    
     @staticmethod
     def SetPortScanningTargetDomains(d: str):
         from general import General
+
         GlobalEnv.__portScanningTargetDomains = General.GetStrippedString(d)
 
     @staticmethod
     def GetPortScanningTargetDomains():
         return GlobalEnv.__portScanningTargetDomains
-
-    @staticmethod
-    def SetTempJson(d: str):
-        from general import General
-        GlobalEnv.__tempJson = General.GetStrippedString(d)
-
-    @staticmethod
-    def GetTempJson():
-        return GlobalEnv.__tempJson
-
-
-    @staticmethod
-    def SetLogFile(lf):
-        from general import General
-
-        GlobalEnv.__LogFile = General.GetStrippedString(lf)
-
-    @staticmethod
-    def GetLogFile():
-        return GlobalEnv.__LogFile
 
     @staticmethod
     def SetPortScanningTarget(lf):
@@ -145,6 +324,7 @@ class GlobalEnv:
     @staticmethod
     def SetDoPortScanning(rf):
         from general import General
+
         if General.GetStrippedString(rf) == "0":
             GlobalEnv.__doPortScanning = False
         else:
@@ -153,10 +333,11 @@ class GlobalEnv:
     @staticmethod
     def GetDoPortScanning():
         return GlobalEnv.__doPortScanning
-    
+
     @staticmethod
     def SetDoCrawling(rf):
         from general import General
+
         if General.GetStrippedString(rf) == "0":
             GlobalEnv.__doCrawling = False
         else:
@@ -165,10 +346,11 @@ class GlobalEnv:
     @staticmethod
     def GetDoCrawling():
         return GlobalEnv.__doCrawling
-    
+
     @staticmethod
     def SetDoFuzzing(rf):
         from general import General
+
         if General.GetStrippedString(rf) == "0":
             GlobalEnv.__doFuzzing = False
         else:
@@ -177,26 +359,6 @@ class GlobalEnv:
     @staticmethod
     def GetDoFuzzing():
         return GlobalEnv.__doFuzzing
-    
-    @staticmethod
-    def SetAssetFinder(lf):
-        from general import General
-
-        GlobalEnv.__assetFinder = General.GetStrippedString(lf)
-
-    @staticmethod
-    def GetAssetFinder():
-        return GlobalEnv.__assetFinder
-
-    @staticmethod
-    def SetWaymore(lf):
-        from general import General
-
-        GlobalEnv.__waymore = General.GetStrippedString(lf)
-
-    @staticmethod
-    def GetWaymore():
-        return GlobalEnv.__waymore
 
     @staticmethod
     def SetSubDomainsPath(rf):
@@ -207,106 +369,6 @@ class GlobalEnv:
     @staticmethod
     def GetSubDomainsPath():
         return GlobalEnv.__SubDomainsFile
-
-    @staticmethod
-    def SetCrtSH(rf):
-        from general import General
-
-        GlobalEnv.__CrtSH = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetCrtSH():
-        return GlobalEnv.__CrtSH
-
-    @staticmethod
-    def SetSubfinder(rf):
-        from general import General
-
-        GlobalEnv.__SubFinder = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetSubfinder():
-        return GlobalEnv.__SubFinder
-
-    @staticmethod
-    def SetSublist3r(rf):
-        from general import General
-
-        GlobalEnv.__Sublist3r = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetSublist3r():
-        return GlobalEnv.__Sublist3r
-
-    @staticmethod
-    def SetChaos(rf):
-        from general import General
-
-        GlobalEnv.__Chaos = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetChaos():
-        return GlobalEnv.__Chaos
-
-    @staticmethod
-    def SetWaybackurls(rf):
-        from general import General
-
-        GlobalEnv.__Waybackurls = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetWaybackurls():
-        return GlobalEnv.__Waybackurls
-
-    @staticmethod
-    def SetKatana(rf):
-        from general import General
-
-        GlobalEnv.__Katana = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetKatana():
-        return GlobalEnv.__Katana
-
-    @staticmethod
-    def SetGau(rf):
-        from general import General
-
-        GlobalEnv.__Gau = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetGau():
-        return GlobalEnv.__Gau
-
-    @staticmethod
-    def SetGoSpider(rf):
-        from general import General
-
-        GlobalEnv.__GoSpider = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetGoSpider():
-        return GlobalEnv.__GoSpider
-
-    @staticmethod
-    def SetHttpx(rf):
-        from general import General
-
-        GlobalEnv.__Httpx = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetHttpx():
-        return GlobalEnv.__Httpx
-
-    @staticmethod
-    def SetFFUF(rf):
-        from general import General
-
-        GlobalEnv.__ffuf = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetFFUF():
-        return GlobalEnv.__ffuf
 
     @staticmethod
     def SetCrawlingPath(rf):
@@ -339,16 +401,6 @@ class GlobalEnv:
         return GlobalEnv.__ffufWordlist
 
     @staticmethod
-    def SetNmap(rf):
-        from general import General
-
-        GlobalEnv.__nmap = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetNmap():
-        return GlobalEnv.__nmap
-
-    @staticmethod
     def SetPortScanningPath(rf):
         from general import General
 
@@ -357,33 +409,3 @@ class GlobalEnv:
     @staticmethod
     def GetPortScanningPath():
         return GlobalEnv.__portScanningPath
-
-    @staticmethod
-    def SetMasscan(rf):
-        from general import General
-
-        GlobalEnv.__masscan = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetMasscan():
-        return GlobalEnv.__masscan
-
-    @staticmethod
-    def SetAmass(rf):
-        from general import General
-
-        GlobalEnv.__amass = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GetAmass():
-        return GlobalEnv.__amass
-
-    @staticmethod
-    def SettheHarvester(rf):
-        from general import General
-
-        GlobalEnv.__theHarvester = General.GetStrippedString(rf)
-
-    @staticmethod
-    def GettheHarvester():
-        return GlobalEnv.__theHarvester
