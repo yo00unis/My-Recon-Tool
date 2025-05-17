@@ -34,7 +34,7 @@ class SubdomainEnumeration:
     def __Amass(self):
         commands = Commands.AmassCommands()
         for c in commands:
-            General.ExecuteCommand(c, GlobalEnv.GetAmass(), True)
+            General.ExecuteCommand(c, GlobalEnv.GetAmass())
     
     def __AssetFinder(self):
         commands = Commands.AssetFinderCommands()
@@ -59,5 +59,5 @@ class SubdomainEnumeration:
         self.__Sublist3r()
         self.__AssetFinder()
         self.__Chaos()
-        #self.__Amass()
+        self.__Amass()
         self.__Httpx()

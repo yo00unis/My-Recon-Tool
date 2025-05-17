@@ -2,8 +2,6 @@
 import os
 from pathlib import PurePath
 
-
-
 class Files:
     def __init__(self):
         pass
@@ -40,7 +38,24 @@ class Files:
             raise FileNotFoundError()
         with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
             for line in srcFile:
-                destFile.write(f"{General.GetStrippedString(line)}\n")
+                try:
+                    destFile.write(f"{General.GetStrippedString(line)}\n")
+                except Exception as e:
+                    continue
+    @staticmethod
+    def CopyDomainsFromTo(src:str, dest:str):
+        from general import General
+        if Files.IsPathValid(src) == False:
+            raise ValueError(f'{src} file path is invalid')
+        if Files.IsPathValid(dest) == False:
+            raise ValueError(f'{dest} file path is invalid')
+        
+        if Files.IsFileExists(src) == False:
+            raise FileNotFoundError()
+        with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
+            for line in srcFile:
+                l = (((line.strip()).split['['])[0]).strip()
+                destFile.write(f"{General.GetStrippedString(l)}\n")
     
     @staticmethod  
     def ValidateDirectoryPath(path):
@@ -105,6 +120,22 @@ class Files:
     def WriteToFile(path, mode, line:str):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             f.write(f'{line}\n')
+    
+    @staticmethod
+    def WriteToPortScanningTargetFile():
+        from globalEnv import GlobalEnv
+        from general import General
+        with open(GlobalEnv.GetHttpx(), 'r', encoding="utf-8", errors='ignore') as f:
+            for line in f:
+                url = (((str(line)).split(" ["))[0]).strip()
+                domain = General.GetDomainFromUrl(url)
+                ip = General.getIPfromDomain(domain)
+                if ip != None:
+                    print(f'{ip.strip()} -> {domain.strip()}')
+                    with open(GlobalEnv.GetPortScanningTarget(), 'a', encoding="utf-8", errors='ignore') as f1:
+                        f1.write(f'{ip}\n')
+                    with open(GlobalEnv.GetPortScanningTargetDomains(), 'a', encoding="utf-8", errors='ignore') as f2:
+                        f2.write(f'{domain}\n')                    
             
     @staticmethod
     def WriteListToFile(path, mode, lines:list):

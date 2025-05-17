@@ -7,30 +7,17 @@ from globalEnv import GlobalEnv
 class PortScanning:
     def __init__(self):
         pass
-
+    
+    def __ReadSubdomains(self):
+        if not GlobalEnv.GetDoSubdomainEnumeration():
+            if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
+                    Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+                    
     def __ExportHttpxResultsToTargetFile(self):
         try:
-            httpxlines = Files.GetNumberOfLines(GlobalEnv.GetHttpx())
-            if httpxlines == 0 or httpxlines == 1:
-                if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
-                    Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
-            Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
-            with open(
-                f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
-            ) as f:
-                for line in f:
-                    url = (((str(line)).split(" ["))[0]).strip()
-                    domain = General.GetDomainFromUrl(url)
-                    Files.WriteToFile(
-                        GlobalEnv.GetPortScanningTarget(),
-                        "a",
-                        General.getIPfromDomain(domain),
-                    )
-                    Files.WriteToFile(
-                        GlobalEnv.GetPortScanningTargetDomains(),
-                        "a",
-                        domain,
-                    )
+            self.__ReadSubdomains()
+            Files.WriteToPortScanningTargetFile()
             Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
             Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
         except Exception as e:
@@ -54,6 +41,6 @@ class PortScanning:
 
     def Execute(self):
         self.__ExportHttpxResultsToTargetFile()
-        self.__Masscan()
-        self.__Nmap()
-        self.__Naabu()
+        # self.__Masscan()
+        # self.__Nmap()
+        # self.__Naabu()

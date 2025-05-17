@@ -1,5 +1,6 @@
 
 from commands import Commands
+from files import Files
 from globalEnv import GlobalEnv
 from general import General
 
@@ -28,7 +29,14 @@ class Crawling:
         for c in commands:
             General.ExecuteCommand(c, GlobalEnv.GetWaybackurls(), False, False, True)
         
+    def __ReadSubdomains(self):
+        if not GlobalEnv.GetDoSubdomainEnumeration():
+            if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
+                    Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+    
     def Execute(self):
+        self.__ReadSubdomains()
         try:
             with open(
                 f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"

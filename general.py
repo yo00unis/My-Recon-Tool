@@ -22,7 +22,7 @@ class General:
     @staticmethod
     def getIPfromDomain(domain):
         try:
-            ip = socket.gethostbyname(domain)
+            ip = socket.gethostbyname(domain.strip())
             return ip
         except socket.gaierror as e:
             print(f"Error resolving {domain}: {e}")

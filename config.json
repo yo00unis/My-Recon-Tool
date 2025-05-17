@@ -1,10 +1,10 @@
 {
 	"ResultDirectory":"ReconResult",
 	"Domain":"giotto.de",
-	"DoSubdomainEnumeration":"1",
+	"DoSubdomainEnumeration":"0",
 	"DoPortScanning":"1",
 	"Ports":"",
-	"DoCrawling":"1",
+	"DoCrawling":"0",
 	"DoFuzzing":"0",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt"
 }
