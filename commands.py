@@ -44,8 +44,8 @@ class Commands:
     @staticmethod
     def HttpxCommands():    
         commands = [
-            #f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -title -tech-detect -follow-redirects -o {GlobalEnv.GetTempFile()}'
-            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -o {GlobalEnv.GetTempFile()}'
+            f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -title -tech-detect -follow-redirects -o {GlobalEnv.GetTempFile()}'
+            #f'httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     

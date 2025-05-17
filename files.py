@@ -3,6 +3,7 @@ import os
 from pathlib import PurePath
 
 
+
 class Files:
     def __init__(self):
         pass
@@ -75,11 +76,11 @@ class Files:
             return False
     
     @staticmethod
-    def SaveTextToFile(txt:str, file:str):
+    def SaveTextToFile(txt:str, file:str, mode='a'):
         if Files.IsPathValid(file) == False:
             raise ValueError(f'{file} file path is invalid')
         
-        with open(file, 'a') as srcFile:
+        with open(file, mode) as srcFile:
             srcFile.write(f"{txt}\n")
     
     @staticmethod
@@ -109,4 +110,18 @@ class Files:
     def WriteListToFile(path, mode, lines:list):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             for l in lines:
-                f.write(l)
+                f.write(f'{l}\n')
+    
+    @staticmethod
+    def RemoveDuplicateFromDile(path):
+        seen = set()
+        unique_lines = []
+
+        with open(path, 'r') as infile:
+            for line in infile:
+                if line not in seen:
+                    seen.add(line)
+                    unique_lines.append(line)
+
+        with open(path, 'w') as outfile:
+            outfile.writelines(unique_lines)

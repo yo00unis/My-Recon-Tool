@@ -64,7 +64,7 @@ class Config:
         print("--------------------------------")
         print("if you want to exit tool press Ctrl + c")
         print("--------------------------------")
-        pass
+        
 
     @staticmethod
     def __SetGlobalEnv():
@@ -130,7 +130,8 @@ class Config:
     @staticmethod
     def __CheckDoSubdomainEnumerationConfig():
         # append domain to httpx if config domain not wildcard
-        Files.WriteToFile(GlobalEnv.GetHttpx(), "a", GlobalEnv.GetDomain())
+        if not GlobalEnv.GetDoSubdomainEnumeration():
+            Files.WriteToFile(GlobalEnv.GetHttpx(), "a", GlobalEnv.GetDomain())
 
     @staticmethod
     def LoadConfig():

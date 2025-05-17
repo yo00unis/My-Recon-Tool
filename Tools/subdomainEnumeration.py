@@ -1,5 +1,6 @@
 
 from commands import Commands
+from files import Files
 from request import Requests
 from general import General
 from globalEnv import GlobalEnv
@@ -13,8 +14,11 @@ class SubdomainEnumeration:
     
     def __CrtSh(self):
         response = Requests.Get(url=f"{self.__crtSHsiteUrl}{GlobalEnv.GetDomain()}")
-        self.__f.SaveTextToFile(response.text, f"{GlobalEnv.GetCrtSH()}")
-        self.__f.SaveTextToFile(response.text, f"{GlobalEnv.GetLogFile()}")
+        Files.SaveTextToFile(response.text, f"{GlobalEnv.GetCrtSH()}", 'w')
+        Files.SaveTextToFile(response.text, f"{GlobalEnv.GetLogFile()}")
+        if response.status_code == 200:
+            domains = General.ExtractDomainsFromJsonFile(GlobalEnv.GetCrtSH())
+            Files.WriteListToFile(GlobalEnv.GetSubDomainsPath(), 'a', domains)
     
     def __Subfinder(self):
         commands = Commands.SubfinderCommands()
@@ -42,16 +46,17 @@ class SubdomainEnumeration:
             General.ExecuteCommand(c, GlobalEnv.GetChaos(), True)
     
     def __Httpx(self):
+        General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
         commands = Commands.HttpxCommands()
         for c in commands:
-            General.ExecuteCommand(c, GlobalEnv.GetHttpx(), True)
+            General.ExecuteCommand(c, GlobalEnv.GetHttpx())
     
     
     def Execute(self):
+        self.__CrtSh()
         self.__Subfinder()
         self.__Sublist3r()
         self.__AssetFinder()
         self.__Chaos()
         self.__Amass()
-        self.__CrtSh()
         self.__Httpx()

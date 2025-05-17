@@ -1,8 +1,8 @@
 {
 	"ResultDirectory":"ReconResult",
-	"Domain":"juice-shop.herokuapp.com",
-	"DoSubdomainEnumeration":"0",
-	"DoPortScanning":"1",
+	"Domain":"hackerone.com",
+	"DoSubdomainEnumeration":"1",
+	"DoPortScanning":"0",
 	"Ports":"",
 	"DoCrawling":"0",
 	"DoFuzzing":"0",

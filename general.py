@@ -1,5 +1,6 @@
 
 import io
+import json
 import os
 import platform
 import re
@@ -116,3 +117,33 @@ class General:
             domain = domain[4:]
         
         return domain
+
+    @staticmethod
+    def ExtractDomainsFromJsonFile(file_path):
+        # Regular expression for domain and subdomain matching
+        domain_pattern = re.compile(
+            r'\b(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b', re.IGNORECASE
+        )
+
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        # Convert JSON data to string (if nested) and find all domains
+        json_text = json.dumps(data)
+        domains = set(domain_pattern.findall(json_text))
+
+        return sorted(domains)
+    
+    @staticmethod
+    def RemoveOutOfScopeFromSubdomains(path):
+        seen = set()
+        unique_lines = []
+
+        with open(path, 'r') as infile:
+            for line in infile:
+                if line not in seen and GlobalEnv.GetDomain() in line:
+                    seen.add(line)
+                    unique_lines.append(line)
+
+        with open(path, 'w') as outfile:
+            outfile.writelines(unique_lines)
