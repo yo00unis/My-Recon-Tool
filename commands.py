@@ -9,7 +9,7 @@ class Commands:
     @staticmethod
     def SubfinderCommands():    
         commands = [
-            f'subfinder -d {GlobalEnv.GetDomain()} -o {GlobalEnv.GetTempFile()}'
+            f'subfinder -d {GlobalEnv.GetDomain()} -all -o {GlobalEnv.GetTempFile()}'
         ]
         return commands
     
@@ -82,10 +82,10 @@ class Commands:
         commands = []
         ports = GlobalEnv.GetPorts()
         if len(ports) > 0:
-            command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetTempFile()}'
+            command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTargetDomains()} -oN {GlobalEnv.GetTempFile()}'
             commands.append(command)
         else:    
-            command = f'nmap -sA -sU --top-ports 100 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {GlobalEnv.GetTempFile()}'
+            command = f'nmap -sA -sU --top-ports 100 -A -iL {GlobalEnv.GetPortScanningTargetDomains()} -oN {GlobalEnv.GetTempFile()}'
             commands.append(command)
             
         return commands

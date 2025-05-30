@@ -38,6 +38,7 @@ class GlobalEnv:
     __tempFile = f""
     __tempJson = f""
     __naabu = f""
+    __dnsRecords = f""
 
     # port scanning tools
     @staticmethod
@@ -69,6 +70,16 @@ class GlobalEnv:
     @staticmethod
     def GetMasscan():
         return GlobalEnv.__masscan
+
+    @staticmethod
+    def SetDnsRecords(rf):
+        from general import General
+
+        GlobalEnv.__dnsRecords = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetDnsRecords():
+        return GlobalEnv.__dnsRecords
 
     # subdomain enumeration tools
     @staticmethod

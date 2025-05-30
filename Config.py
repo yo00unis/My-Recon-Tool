@@ -64,7 +64,6 @@ class Config:
         print("--------------------------------")
         print("if you want to exit tool press Ctrl + c")
         print("--------------------------------")
-        
 
     @staticmethod
     def __SetGlobalEnv():
@@ -118,10 +117,13 @@ class Config:
         GlobalEnv.SetMasscan(f"{GlobalEnv.GetResultFolder()}portScanning/masscan.txt")
         GlobalEnv.SetNaabu(f"{GlobalEnv.GetResultFolder()}portScanning/naabu.txt")
         GlobalEnv.SetPortScanningTarget(
-            f"{GlobalEnv.GetResultFolder()}portScanning/target.txt"
+            f"{GlobalEnv.GetResultFolder()}portScanning/Arecords.txt"
         )
         GlobalEnv.SetPortScanningTargetDomains(
             f"{GlobalEnv.GetResultFolder()}portScanning/targetDomain.txt"
+        )
+        GlobalEnv.SetDnsRecords(
+            f"{GlobalEnv.GetResultFolder()}portScanning/dnsRecords.txt"
         )
 
         # Set temp file

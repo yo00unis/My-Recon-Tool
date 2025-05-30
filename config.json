@@ -1,6 +1,6 @@
 {
 	"ResultDirectory":"ReconResult",
-	"Domain":"giotto.de",
+	"Domain":"hackerone.com",
 	"DoSubdomainEnumeration":"0",
 	"DoPortScanning":"1",
 	"Ports":"",
