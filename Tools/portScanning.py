@@ -90,6 +90,6 @@ class PortScanning:
     def Execute(self):
         self.__ExportHttpxResultsToTargetFile()
         self.__dnsRecords()
-        self.__Masscan()
-        self.__Nmap()
-        self.__Naabu()
+        # self.__Masscan()
+        # self.__Nmap()
+        # self.__Naabu()

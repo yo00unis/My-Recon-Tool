@@ -1,4 +1,3 @@
-import dns.resolver
 from commands import Commands
 from files import Files
 from request import Requests
