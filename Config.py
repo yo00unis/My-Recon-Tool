@@ -130,6 +130,9 @@ class Config:
         GlobalEnv.SetTempFile(f"{GlobalEnv.GetResultFolder()}temp.txt")
         GlobalEnv.SetTempJson(f"{GlobalEnv.GetResultFolder()}temp.json")
 
+        # Set screenshot result path
+        GlobalEnv.SetGowitness(f"{GlobalEnv.GetResultFolder()}screenshots")
+
     @staticmethod
     def __CheckDoSubdomainEnumerationConfig():
         # append domain to httpx if config domain not wildcard

@@ -39,6 +39,17 @@ class GlobalEnv:
     __tempJson = f""
     __naabu = f""
     __dnsRecords = f""
+    __gowitness=''
+
+    # screenshot tools
+    @staticmethod
+    def SetGowitness(rf):
+        from general import General
+        GlobalEnv.__gowitness = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetGowitness():
+        return GlobalEnv.__gowitness
 
     # port scanning tools
     @staticmethod

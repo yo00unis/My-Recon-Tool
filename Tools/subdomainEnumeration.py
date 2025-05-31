@@ -7,7 +7,6 @@ from globalEnv import GlobalEnv
 
 class SubdomainEnumeration:
     def __init__(self):
-        from  files import Files
         self.__crtSHsiteUrl = f'https://crt.sh/json?q='
 
     def __CrtSh(self):
@@ -33,6 +32,10 @@ class SubdomainEnumeration:
         commands = Commands.AmassCommands()
         for c in commands:
             General.ExecuteCommand(c, GlobalEnv.GetAmass())
+        amassResult = General.ExtractDomainsFromTextFile(GlobalEnv.GetAmass())
+        Files.WriteListToFile(GlobalEnv.GetSubDomainsPath(), 'a', amassResult)
+        Files.WriteListToFile(GlobalEnv.GetLogFile(), 'a', amassResult)
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
 
     def __AssetFinder(self):
         commands = Commands.AssetFinderCommands()
@@ -56,5 +59,5 @@ class SubdomainEnumeration:
         self.__Sublist3r()
         self.__AssetFinder()
         self.__Chaos()
-        self.__Amass()
+        # self.__Amass()
         self.__Httpx()
