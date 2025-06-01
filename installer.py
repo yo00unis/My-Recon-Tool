@@ -50,9 +50,9 @@ class Installer:
         except Exception as e:
             return False
 
-    def __add_path_to_user_path_linux(self, new_path_entry, shell_rc=None):
+    def __add_path_to_user_path_linux(self, new_path_entry, bashfile:str, shell_rc=None):
         if shell_rc is None:
-            shell_rc = os.path.expanduser('source ~/.bashrc')
+            shell_rc = os.path.expanduser(f'source ~/.{bashfile.strip()}')
 
         new_path_entry = new_path_entry.rstrip('/')
 
@@ -157,9 +157,11 @@ class Installer:
         if General.GetOStype() == "Windows":
             return self.__add_path_to_user_path(go_bin)
         else:
-            self.__add_path_to_user_path_linux("~/go/bin")
+            self.__add_path_to_user_path_linux("~/go/bin", 'bashrc')
+            self.__add_path_to_user_path_linux("~/go/bin", 'zshrc')
             # os.system('bash -c "source ~/.bashrc"')
             subprocess.run("source ~/.bashrc", shell=True, executable="/bin/bash")
+            subprocess.run("source ~/.zshrc", shell=True, executable="/bin/bash")
 
     def __installPipLibraries(self):
         if General.GetOStype() == "Windows":
