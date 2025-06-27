@@ -21,7 +21,8 @@ class Runner:
             subdomainEnumeration = SubdomainEnumeration()
             subdomainEnumeration.Execute()
 
-        self.__screenshot.Execute()
+        if GlobalEnv.GetTakeScreenShots():
+            self.__screenshot.Execute()
 
         if GlobalEnv.GetDoPortScanning():
             portScanning = PortScanning()

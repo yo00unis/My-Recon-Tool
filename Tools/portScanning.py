@@ -65,7 +65,7 @@ class PortScanning:
         with open(GlobalEnv.GetPortScanningTargetDomains())as f:
             for d in f:
                 domain = d.strip()
-                flag = True
+                flagForArecord = True
                 for record_type in self.__record_types:
                     try:
                         answers = dns.resolver.resolve(domain, record_type)
@@ -78,9 +78,9 @@ class PortScanning:
                             print(line)
                             Files.WriteToFile(GlobalEnv.GetDnsRecords(), "a", line)
                             Files.WriteToFile(GlobalEnv.GetLogFile(), "a", line)
-                            if flag:
+                            if flagForArecord:
                                 Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', line)
-                        flag = False
+                        flagForArecord = False
                     except Exception as e:
                         line = f"Error fetching {record_type} records: {e}"
                         print(line)
@@ -90,6 +90,6 @@ class PortScanning:
     def Execute(self):
         self.__ExportHttpxResultsToTargetFile()
         self.__dnsRecords()
-        # self.__Masscan()
-        # self.__Nmap()
-        # self.__Naabu()
+        self.__Masscan()
+        self.__Nmap()
+        self.__Naabu()

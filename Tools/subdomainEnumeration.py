@@ -49,15 +49,21 @@ class SubdomainEnumeration:
 
     def __Httpx(self):
         General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
         commands = Commands.HttpxCommands()
         for c in commands:
-            General.ExecuteCommand(c, GlobalEnv.GetHttpx())
+            # General.ExecuteCommand(c, GlobalEnv.GetHttpx())
+            Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx())
+            # Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+            urls = Files.ExtractUrlsFromFile(GlobalEnv.GetHttpx())
+            Files.WriteListToFile(GlobalEnv.GetEnhancedHttpx(), 'a', urls)
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetEnhancedHttpx())
 
     def Execute(self):
-        self.__CrtSh()
-        self.__Subfinder()
-        self.__Sublist3r()
-        self.__AssetFinder()
-        self.__Chaos()
+        # self.__CrtSh()
+        # self.__Subfinder()
+        # self.__Sublist3r()
+        # self.__AssetFinder()
+        # self.__Chaos()
         # self.__Amass()
         self.__Httpx()

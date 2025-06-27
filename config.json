@@ -1,7 +1,8 @@
 {
 	"ResultDirectory":"ReconResult",
-	"Domain":"hackerone.com",
+	"Domain":"autodesk.com",
 	"DoSubdomainEnumeration":"1",
+	"TakeScreenShots":"1",
 	"DoPortScanning":"0",
 	"Ports":"",
 	"DoCrawling":"0",

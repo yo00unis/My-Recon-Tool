@@ -179,6 +179,16 @@ class General:
         with open(path, 'w') as outfile:
             outfile.writelines(unique_lines)
 
+    @staticmethod
+    def RemoveOutOfScopeFromListOfSubdomains(urls:list):
+        inscopeurls = []
+        for url in urls:
+            s = (((str(url)).strip()).split('.com'))[0]
+            if GlobalEnv.GetDomain() in s:
+                inscopeurls.append(s)
+        return inscopeurls
+        
+
     ### filter result files like subdomains file and waybackurls file from dublicate and bad urls
 
     @staticmethod

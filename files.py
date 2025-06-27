@@ -1,6 +1,7 @@
 import os
 from pathlib import PurePath
 import re
+import shutil
 
 class Files:
     def __init__(self):
@@ -28,7 +29,6 @@ class Files:
 
     @staticmethod
     def CopyFromTo(src:str, dest:str):
-        from general import General
         if Files.IsPathValid(src) == False:
             raise ValueError(f'{src} file path is invalid')
         if Files.IsPathValid(dest) == False:
@@ -36,12 +36,15 @@ class Files:
 
         if Files.IsFileExists(src) == False:
             raise FileNotFoundError()
-        with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
-            for line in srcFile:
-                try:
-                    destFile.write(f"{General.GetStrippedString(line)}\n")
-                except Exception as e:
-                    continue
+
+        shutil.copyfile(src, dest) 
+        
+        # with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
+        #     for line in srcFile:
+        #         try:
+        #             destFile.write(f"{General.GetStrippedString(line)}\n")
+        #         except Exception as e:
+        #             continue
     @staticmethod
     def CopyDomainsFromTo(src:str, dest:str):
         from general import General
@@ -149,6 +152,21 @@ class Files:
                     domain = General.GetDomainFromUrl(url)
                     Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", domain)
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
+
+    @staticmethod
+    def ExtractUrlFromLine(line:str):
+        match = re.search(r"https?://[^\s\[]+", line)
+        if match:
+            url = match.group()
+            return url
+        else:   
+            return None
+
+    @staticmethod
+    def ExtractUrlsFromFile(filename:str):
+        with open(filename.strip(), encoding="utf-8", errors="ignore") as f:
+            urls = re.findall(r'https?://[^\s\[]+', f.read())
+        return list(set(urls))
 
     @staticmethod
     def WriteListToFile(path, mode, lines:list):

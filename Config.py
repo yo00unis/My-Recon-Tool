@@ -45,6 +45,7 @@ class Config:
         GlobalEnv.SetDomain(data["Domain"])
         GlobalEnv.SetFuffWordlist(data["FuzzingWordlist"])
         GlobalEnv.SetDoSubdomainEnumeration(data["DoSubdomainEnumeration"])
+        GlobalEnv.SetTakeScreenShots(data["TakeScreenShots"])
         GlobalEnv.SetPorts(data["Ports"])
         GlobalEnv.SetDoPortScanning(data["DoPortScanning"])
         GlobalEnv.SetDoCrawling(data["DoCrawling"])
@@ -99,6 +100,7 @@ class Config:
         GlobalEnv.SetSubfinder(f"{GlobalEnv.GetResultFolder()}subdomains/subfinder.txt")
         GlobalEnv.SetSublist3r(f"{GlobalEnv.GetResultFolder()}subdomains/sublist3r.txt")
         GlobalEnv.SetHttpx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx.txt")
+        GlobalEnv.SetEnhancedHttpx(f"{GlobalEnv.GetResultFolder()}subdomains/enhancedhttpx.txt")
 
         # set crawling result files
         GlobalEnv.SetKatana(f"{GlobalEnv.GetResultFolder()}crawling/katana.txt")

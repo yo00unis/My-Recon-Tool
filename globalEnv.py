@@ -11,6 +11,7 @@ class GlobalEnv:
     __Sublist3r = f""
     __Chaos = f""
     __Httpx = f""
+    __EnhancedHttpx = f""
     __Waybackurls = f""
     __Katana = f""
     __Gau = f""
@@ -32,6 +33,7 @@ class GlobalEnv:
     __doPortScanning = True
     __doCrawling = True
     __doFuzzing = True
+    __TakeScreenShots = True
     __ports = f""
     __portScanningTarget = f""
     __portScanningTargetDomains = f""
@@ -182,6 +184,15 @@ class GlobalEnv:
     @staticmethod
     def GetHttpx():
         return GlobalEnv.__Httpx
+
+    @staticmethod
+    def SetEnhancedHttpx(rf):
+        from general import General
+        GlobalEnv.__EnhancedHttpx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetEnhancedHttpx():
+        return GlobalEnv.__EnhancedHttpx
 
     # crawling tools
     @staticmethod
@@ -381,6 +392,18 @@ class GlobalEnv:
     @staticmethod
     def GetDoFuzzing():
         return GlobalEnv.__doFuzzing
+
+    @staticmethod
+    def SetTakeScreenShots(rf):
+        from general import General
+        if General.GetStrippedString(rf) == "0":
+            GlobalEnv.__TakeScreenShots = False
+        else:
+            GlobalEnv.__TakeScreenShots = True
+
+    @staticmethod
+    def GetTakeScreenShots():
+        return GlobalEnv.__TakeScreenShots
 
     @staticmethod
     def SetSubDomainsPath(rf):
