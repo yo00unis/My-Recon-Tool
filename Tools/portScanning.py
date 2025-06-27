@@ -33,15 +33,14 @@ class PortScanning:
         if not GlobalEnv.GetDoSubdomainEnumeration():
             if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
                 Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+            else:
+                Files.WriteToFile(GlobalEnv.GetHttpx(), 'a', GlobalEnv.GetDomain())
+            Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
 
     def __ExportHttpxResultsToTargetFile(self):
         try:
             self.__ReadSubdomains()
             Files.GetDomainsFromHttpxFileToTargetDomainsFile()
-            # Files.WriteToPortScanningTargetFile()
-            # Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
-            # Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
         except Exception as e:
             print(f"Error running: {str(e)}")
 
