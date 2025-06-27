@@ -3,9 +3,9 @@
 	"Domain":"autodesk.com",
 	"DoSubdomainEnumeration":"1",
 	"TakeScreenShots":"1",
-	"DoPortScanning":"0",
-	"Ports":"",
-	"DoCrawling":"0",
-	"DoFuzzing":"0",
+	"DoPortScanning":"1",
+	"Ports":"443,80",
+	"DoCrawling":"1",
+	"DoFuzzing":"1",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt"
 }

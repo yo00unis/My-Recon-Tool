@@ -9,14 +9,12 @@ class ScreenShot:
         pass
 
     def __prepareOperation(self):
-        Files.WriteToFile(GlobalEnv.GetTempFile(), 'w', '')
-        Files.WriteToFile(GlobalEnv.GetTempFile(), 'a', GlobalEnv.GetDomain())
-        if Files.IsFileExists(GlobalEnv.GetHttpx()):
-            Files.WriteListToFile(GlobalEnv.GetTempFile(), 'a', General.GetDomainsFromHttpxFile())
-        if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()) and not GlobalEnv.GetDoSubdomainEnumeration():
-            General.FilterResultFile(GlobalEnv.GetSubDomainsPath())
-            Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetTempFile())
-
+        Files.WriteToFile(GlobalEnv.GetTempFile(), "w", "")
+        if GlobalEnv.GetDoSubdomainEnumeration() or Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
+            Files.CopyFromTo(GlobalEnv.GetEnhancedHttpx(), GlobalEnv.GetTempFile())
+        else:
+            Files.WriteToFile(GlobalEnv.GetTempFile(), 'a', GlobalEnv.GetDomain())
+        
         Files.RemoveDuplicateFromFile(GlobalEnv.GetTempFile())
 
     def __TakeSubdomainsScreenshot(self):
