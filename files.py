@@ -38,7 +38,7 @@ class Files:
             raise FileNotFoundError()
 
         shutil.copyfile(src, dest) 
-        
+
         # with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
         #     for line in srcFile:
         #         try:
@@ -131,12 +131,13 @@ class Files:
         with open(GlobalEnv.GetHttpx(), 'r', encoding="utf-8", errors='ignore') as f:
             for line in f:
                 url = (((str(line)).split(" ["))[0]).strip()
-                domain = General.GetDomainFromUrl(url)
-                ip = General.getIPfromDomain(domain)
-                if ip != None:
-                    print(f'{ip.strip()} -> {domain.strip()}')
-                    Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', ip)
-                    Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), 'a', domain)  
+                domain = Files.ExtractUrlFromLine(url)
+                if domain != None:
+                    ip = General.getIPfromDomain(domain)
+                    if ip != None:
+                        print(f'{ip.strip()} -> {domain.strip()}')
+                        Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', ip)
+                        Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), 'a', domain)  
 
     @staticmethod
     def GetDomainsFromHttpxFileToTargetDomainsFile():
@@ -149,13 +150,16 @@ class Files:
                 strippedLine = line.strip()
                 if pattern.search(strippedLine) or '[' not in strippedLine:
                     url = (((str(line)).split(" ["))[0]).strip()
-                    domain = General.GetDomainFromUrl(url)
-                    Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", domain)
+                    domain = Files.ExtractUrlFromLine(url)
+                    if domain != None:
+                        Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", domain)
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
 
     @staticmethod
     def ExtractUrlFromLine(line:str):
-        match = re.search(r"https?://[^\s\[]+", line)
+        match = re.search(
+            r"(?:https?://)?(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})", line
+        )
         if match:
             url = match.group()
             return url

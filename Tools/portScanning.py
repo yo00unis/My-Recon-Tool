@@ -35,7 +35,7 @@ class PortScanning:
                 Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
             else:
                 Files.WriteToFile(GlobalEnv.GetHttpx(), 'a', GlobalEnv.GetDomain())
-            Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
 
     def __ExportHttpxResultsToTargetFile(self):
         try:

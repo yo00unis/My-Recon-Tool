@@ -164,10 +164,11 @@ class Installer:
             subprocess.run("source ~/.zshrc", shell=True, executable="/bin/bash")
 
     def __installPipLibraries(self):
-        if General.GetOStype() == "Windows":
-            os.system("pipx install dnspython")
-        else:
-            os.system("pip install dnspython --break-system-packages")
+        if not self.__isToolInstalled("dnspython"):
+            if General.GetOStype() == "Windows":
+                os.system("pipx install dnspython")
+            else:
+                os.system("pip install dnspython --break-system-packages")
 
     def Execute(self):
         self.__installScoope()

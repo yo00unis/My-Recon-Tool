@@ -1,11 +1,11 @@
 {
 	"ResultDirectory":"ReconResult",
 	"Domain":"autodesk.com",
-	"DoSubdomainEnumeration":"1",
-	"TakeScreenShots":"1",
+	"DoSubdomainEnumeration":"0",
+	"TakeScreenShots":"0",
 	"DoPortScanning":"1",
 	"Ports":"443,80",
 	"DoCrawling":"1",
-	"DoFuzzing":"1",
+	"DoFuzzing":"0",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt"
 }
