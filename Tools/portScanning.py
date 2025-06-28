@@ -29,20 +29,12 @@ class PortScanning:
         "TLSA",
     ]
 
-    def __ReadSubdomains(self):
-        if not GlobalEnv.GetDoSubdomainEnumeration():
-            if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
-                Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
-            else:
-                Files.WriteToFile(GlobalEnv.GetHttpx(), 'a', GlobalEnv.GetDomain())
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
-
-    def __ExportHttpxResultsToTargetFile(self):
-        try:
-            self.__ReadSubdomains()
-            Files.GetDomainsFromHttpxFileToTargetDomainsFile()
-        except Exception as e:
-            print(f"Error running: {str(e)}")
+    def __prepare(self):
+        if (Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()) and Files.IsFileEmpty(GlobalEnv.GetEnhancedHttpx())) or not Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
+            Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", GlobalEnv.GetDomain())
+        else:
+            Files.CopyFromTo(GlobalEnv.GetEnhancedHttpx(), GlobalEnv.GetPortScanningTargetDomains())
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
 
     def __Masscan(self):
         commands = Commands.MasscanCommands()
@@ -87,7 +79,7 @@ class PortScanning:
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
 
     def Execute(self):
-        self.__ExportHttpxResultsToTargetFile()
+        self.__prepare()
         self.__dnsRecords()
         self.__Masscan()
         self.__Nmap()

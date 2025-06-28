@@ -39,15 +39,8 @@ class Files:
 
         shutil.copyfile(src, dest) 
 
-        # with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
-        #     for line in srcFile:
-        #         try:
-        #             destFile.write(f"{General.GetStrippedString(line)}\n")
-        #         except Exception as e:
-        #             continue
     @staticmethod
     def CopyDomainsFromTo(src:str, dest:str):
-        from general import General
         if Files.IsPathValid(src) == False:
             raise ValueError(f'{src} file path is invalid')
         if Files.IsPathValid(dest) == False:
@@ -57,8 +50,7 @@ class Files:
             raise FileNotFoundError()
         with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
             for line in srcFile:
-                l = (((line.strip()).split['['])[0]).strip()
-                destFile.write(f"{General.GetStrippedString(l)}\n")
+                destFile.write(f"{Files.ExtractUrlFromLine(line)}\n")
 
     @staticmethod  
     def ValidateDirectoryPath(path):
@@ -87,7 +79,6 @@ class Files:
     @staticmethod
     def IsPathValid(path):
         try:
-            # Path(path)
             PurePath(path)
             return True
         except (TypeError, ValueError):
@@ -130,30 +121,13 @@ class Files:
         from general import General
         with open(GlobalEnv.GetHttpx(), 'r', encoding="utf-8", errors='ignore') as f:
             for line in f:
-                url = (((str(line)).split(" ["))[0]).strip()
-                domain = Files.ExtractUrlFromLine(url)
+                domain = Files.ExtractUrlFromLine(line)
                 if domain != None:
                     ip = General.getIPfromDomain(domain)
                     if ip != None:
                         print(f'{ip.strip()} -> {domain.strip()}')
                         Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', ip)
                         Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), 'a', domain)  
-
-    @staticmethod
-    def GetDomainsFromHttpxFileToTargetDomainsFile():
-        from globalEnv import GlobalEnv
-        from general import General
-        # pattern = re.compile(r"\b([23]\d{2}|40[0-35-9]|4[1-9]\d)\b")
-        pattern = re.compile(r"\b([23]\d{2}|401|403)\b")
-        with open(GlobalEnv.GetHttpx(), "r", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                strippedLine = line.strip()
-                if pattern.search(strippedLine) or '[' not in strippedLine:
-                    url = (((str(line)).split(" ["))[0]).strip()
-                    domain = Files.ExtractUrlFromLine(url)
-                    if domain != None:
-                        Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", domain)
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
 
     @staticmethod
     def ExtractUrlFromLine(line:str):

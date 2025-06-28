@@ -29,14 +29,18 @@ class Crawling:
         for c in commands:
             General.ExecuteCommand(c, GlobalEnv.GetWaybackurls(), False, False, True)
 
-    def __ReadSubdomains(self):
-        if not GlobalEnv.GetDoSubdomainEnumeration():
-            if Files.IsFileExists(GlobalEnv.GetSubDomainsPath()):
-                Files.CopyFromTo(GlobalEnv.GetSubDomainsPath(), GlobalEnv.GetHttpx())
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx())
+    def __prepare(self):
+        if (
+            Files.IsFileExists(GlobalEnv.GetEnhancedHttpx())
+            and Files.IsFileEmpty(GlobalEnv.GetEnhancedHttpx())
+        ) or not Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
+            Files.WriteToFile(
+                GlobalEnv.GetEnhancedHttpx(), "a", GlobalEnv.GetDomain()
+            )
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetEnhancedHttpx())
 
     def Execute(self):
-        self.__ReadSubdomains()
+        self.__prepare()
         self.__Waybackurls()
         General.FilterResultFile(GlobalEnv.GetWaybackurls())
         try:
