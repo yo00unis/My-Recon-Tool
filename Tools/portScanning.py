@@ -30,7 +30,10 @@ class PortScanning:
     ]
 
     def __prepare(self):
-        if (Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()) and Files.IsFileEmpty(GlobalEnv.GetEnhancedHttpx())) or not Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
+        if (
+            Files.IsFileExists(GlobalEnv.GetEnhancedHttpx())
+            and Files.IsFileEmpty(GlobalEnv.GetEnhancedHttpx())
+            )or not Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
             Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", GlobalEnv.GetDomain())
         else:
             Files.CopyFromTo(GlobalEnv.GetEnhancedHttpx(), GlobalEnv.GetPortScanningTargetDomains())

@@ -41,8 +41,6 @@ class Crawling:
 
     def Execute(self):
         self.__prepare()
-        self.__Waybackurls()
-        General.FilterResultFile(GlobalEnv.GetWaybackurls())
         try:
             with open(
                 f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
@@ -52,5 +50,7 @@ class Crawling:
                     self.__Katana(url)
                     self.__Gau(url)
                     self.__GoSpider(url)
+            self.__Waybackurls()
+            General.FilterResultFile(GlobalEnv.GetWaybackurls())
         except Exception as e:
             print(f"Error running: {str(e)}")
