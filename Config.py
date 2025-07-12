@@ -74,6 +74,7 @@ class Config:
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}portScanning")
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}crawling")
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}fuzzing")
+        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}subdomains/httpx")
 
         # Set log file and base file containing all results in the folder
         GlobalEnv.SetLogFile(f"{GlobalEnv.GetResultFolder()}logs.txt")
@@ -134,6 +135,12 @@ class Config:
 
         # Set screenshot result path
         GlobalEnv.SetGowitness(f"{GlobalEnv.GetResultFolder()}screenshots")
+
+        # Set httpx filter result
+        GlobalEnv.SetHttpx2xx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx/httpx2xx.txt")
+        GlobalEnv.SetHttpx3xx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx/httpx3xx.txt")
+        GlobalEnv.SetHttpx4xx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx/httpx4xx.txt")
+        GlobalEnv.SetHttpx5xx(f"{GlobalEnv.GetResultFolder()}subdomains/httpx/httpx5xx.txt")
 
     @staticmethod
     def __CheckDoSubdomainEnumerationConfig():

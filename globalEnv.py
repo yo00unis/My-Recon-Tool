@@ -41,12 +41,58 @@ class GlobalEnv:
     __tempJson = f""
     __naabu = f""
     __dnsRecords = f""
-    __gowitness=''
+    __gowitness = ""
+    __httpx2xx = ""
+    __httpx3xx = ""
+    __httpx4xx = ""
+    __httpx5xx = ""
+
+    # httpx result filter
+    @staticmethod
+    def SetHttpx2xx(rf):
+        from general import General
+
+        GlobalEnv.__httpx2xx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetHttpx2xx():
+        return GlobalEnv.__httpx2xx
+
+    @staticmethod
+    def SetHttpx3xx(rf):
+        from general import General
+
+        GlobalEnv.__httpx3xx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetHttpx3xx():
+        return GlobalEnv.__httpx3xx
+
+    @staticmethod
+    def SetHttpx4xx(rf):
+        from general import General
+
+        GlobalEnv.__httpx4xx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetHttpx4xx():
+        return GlobalEnv.__httpx4xx
+
+    @staticmethod
+    def SetHttpx5xx(rf):
+        from general import General
+
+        GlobalEnv.__httpx5xx = General.GetStrippedString(rf)
+
+    @staticmethod
+    def GetHttpx5xx():
+        return GlobalEnv.__httpx5xx
 
     # screenshot tools
     @staticmethod
     def SetGowitness(rf):
         from general import General
+
         GlobalEnv.__gowitness = General.GetStrippedString(rf)
 
     @staticmethod
@@ -188,6 +234,7 @@ class GlobalEnv:
     @staticmethod
     def SetEnhancedHttpx(rf):
         from general import General
+
         GlobalEnv.__EnhancedHttpx = General.GetStrippedString(rf)
 
     @staticmethod
@@ -396,6 +443,7 @@ class GlobalEnv:
     @staticmethod
     def SetTakeScreenShots(rf):
         from general import General
+
         if General.GetStrippedString(rf) == "0":
             GlobalEnv.__TakeScreenShots = False
         else:
