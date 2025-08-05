@@ -4,15 +4,14 @@ import os
 import platform
 import re
 import socket
+import subprocess
 import sys
 from threading import Lock
 from urllib.parse import urlparse
-
 import concurrent.futures
-
-from files import Files
-from globalEnv import GlobalEnv
-from request import Requests
+from Classes.files import Files
+from Classes.globalEnv import GlobalEnv
+from Classes.request import Requests
 
 
 class General:
@@ -87,30 +86,13 @@ class General:
         return s.strip()
 
     @staticmethod
-    def ExecuteCommand(command:str, outputFile:str='', isForSubDomainEnumeration=False, isForPortScanning = False, isForCrawling=False, isForFuzzing=False):
-        os.system(command)
-
+    def ExecuteCommand(cmd:str, outputFile:str=''):
+        subprocess.run(cmd, shell=True, check=True)
         if outputFile == '':
             return
-
-        if not isForFuzzing:
-            Files.CopyFromTo(GlobalEnv.GetTempFile(), outputFile)
         else:
-            Files.CopyFromTo(GlobalEnv.GetTempJson(), outputFile)
-
+            Files.CopyFromTo(GlobalEnv.GetTempFile(), outputFile)    
         Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
-
-        if isForSubDomainEnumeration:
-            Files.CopyFromTo(outputFile, GlobalEnv.GetSubDomainsPath())
-
-        if isForCrawling:
-            Files.CopyFromTo(outputFile, GlobalEnv.GetCrawlingPath())
-
-        if isForFuzzing:
-            Files.CopyFromTo(outputFile, GlobalEnv.GetFuzzingPath())
-
-        if isForPortScanning:
-            Files.CopyFromTo(outputFile, GlobalEnv.GetPortScanningPath())
 
     @staticmethod
     def GetUrlFromDomain(url):
@@ -234,3 +216,14 @@ class General:
                 domain = General.GetUrlFromDomain(url.strip())
                 domains.append(domain)
         return sorted(set(domains))
+
+    @staticmethod
+    def commandsExecuter(func, path:str, toolname:str, ext:str="txt"):
+        i = 1
+        commands = func
+        for c in commands:
+            outFile = f"{path}/{toolname}{i}.{ext}"
+            General.ExecuteCommand(c, outFile)
+            i = i + 1
+    
+

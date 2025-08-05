@@ -1,5 +1,5 @@
-from general import General
-from globalEnv import GlobalEnv
+from Classes.general import General
+from Classes.globalEnv import GlobalEnv
 
 class Commands:
     def __init__(self):

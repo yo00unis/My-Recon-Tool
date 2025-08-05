@@ -2,10 +2,11 @@ import signal
 import sys
 import psutil
 
-from runner import Runner
+from Classes.runner import Runner
+
+
 
 # mymodule.py
-
 
 def signal_handler(sig, frame):
     current_process = psutil.Process()

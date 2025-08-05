@@ -23,21 +23,29 @@ class Files:
 
     @staticmethod        
     def CreateFolder(path:str):
-        from general import General
-        if not os.path.isdir(General.GetStrippedString(path)):
-            os.mkdir(path=General.GetStrippedString(path))
+        from Classes.general import General
+        if not os.path.isdir(path.strip()):
+            try:
+                os.mkdir(path.strip())
+            except Exception as e:
+                print("Failed to create folder")
+
 
     @staticmethod
     def CopyFromTo(src:str, dest:str):
-        if Files.IsPathValid(src) == False:
-            raise ValueError(f'{src} file path is invalid')
-        if Files.IsPathValid(dest) == False:
-            raise ValueError(f'{dest} file path is invalid')
+        if not Files.IsPathValid(src) or not Files.IsFileExists(src):
+            raise FileNotFoundError(f"Source file not found or invalid: {src}")
 
-        if Files.IsFileExists(src) == False:
-            raise FileNotFoundError()
+        # Ensure destination directory exists
+        dest_dir = os.path.dirname(dest)
+        if dest_dir and not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
 
-        shutil.copyfile(src, dest) 
+        with open(src, 'r', encoding='utf-8') as fsrc:
+            content = fsrc.read()
+
+        with open(dest, 'a', encoding='utf-8') as fdest:
+            fdest.write(content)
 
     @staticmethod
     def CopyDomainsFromTo(src:str, dest:str):
@@ -54,7 +62,7 @@ class Files:
 
     @staticmethod  
     def ValidateDirectoryPath(path):
-        from general import General
+        from Classes.general import General
         if Files.IsPathValid(path):
             if Files.IsDirectory(path):
                 return True
@@ -69,7 +77,7 @@ class Files:
     @staticmethod            
     def SaveUniqueListToFile(ls:list, file:str):
         try:
-            from general import General
+            from Classes.general import General
             uniqueURLs =  General.GetUniqueURLs(urls=ls)
             Files.SaveListToFile(uniqueURLs, file)
             return True
@@ -117,8 +125,8 @@ class Files:
 
     @staticmethod
     def WriteToPortScanningTargetFile():
-        from globalEnv import GlobalEnv
-        from general import General
+        from Classes.globalEnv import GlobalEnv
+        from Classes.general import General
         with open(GlobalEnv.GetHttpx(), 'r', encoding="utf-8", errors='ignore') as f:
             for line in f:
                 domain = Files.ExtractUrlFromLine(line)
