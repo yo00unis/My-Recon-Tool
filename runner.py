@@ -4,8 +4,10 @@ from Tools.crawling import Crawling
 from Tools.portScanning import PortScanning
 from Tools.screenshot import ScreenShot
 from Tools.subdomainEnumeration import SubdomainEnumeration
+from general import General
 from globalEnv import GlobalEnv
 from installer import Installer
+from linux_installer import LinuxInstaller
 
 
 class Runner:
@@ -13,9 +15,15 @@ class Runner:
         Config.LoadConfig()
         self.__screenshot = ScreenShot()
         self.__installer = Installer()
+        self.__linuxinstaller = LinuxInstaller()
 
     def Execute(self):
-        self.__installer.Execute()
+
+        if General.GetOStype() == "Windows":
+            self.__installer.Execute()
+        else:
+            self.__linuxinstaller.Execute()
+        
 
         if GlobalEnv.GetDoSubdomainEnumeration():
             subdomainEnumeration = SubdomainEnumeration()
