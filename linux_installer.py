@@ -99,3 +99,4 @@ class LinuxInstaller:
     def Execute(self):
         self.__install_go_language()
         self.__installPIPX()
+        self.__gotoolsinstaller.Execute()

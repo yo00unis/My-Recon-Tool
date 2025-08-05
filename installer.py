@@ -79,3 +79,4 @@ class Installer:
         self.__installPipx()
         self.__installPipLibraries()
         self.__add_go_bin_to_path()
+        self.__gotoolsinstaller.Execute()
