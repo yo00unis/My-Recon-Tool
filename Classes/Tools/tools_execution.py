@@ -60,17 +60,16 @@ class SubdomainEnumeration:
                 Files.CopyFromTo(file_path, GlobalEnv.GetSubDomainsPath())
 
     def Execute(self):
-        if GlobalEnv.GetDoSubdomainEnumeration():
-            Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
-            # self.__CrtSh()
-            # General.commandsExecuter(Commands.SubfinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "subfinder")
-            # General.commandsExecuter(Commands.Sublist3rCommands(), GlobalEnv.GetSubDomainsFolderPath(), "sublist3r")
-            # General.commandsExecuter(Commands.AssetFinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "assetfinder")
-            # General.commandsExecuter(Commands.ChaosCommands(), GlobalEnv.GetSubDomainsFolderPath(), "chaos")
-            self.__compine_subdomain_enumeration_result()
-            Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
-            General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
-            # self.__Httpx()
+        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
+        self.__CrtSh()
+        General.commandsExecuter(Commands.SubfinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "subfinder")
+        General.commandsExecuter(Commands.Sublist3rCommands(), GlobalEnv.GetSubDomainsFolderPath(), "sublist3r")
+        General.commandsExecuter(Commands.AssetFinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "assetfinder")
+        General.commandsExecuter(Commands.ChaosCommands(), GlobalEnv.GetSubDomainsFolderPath(), "chaos")
+        self.__compine_subdomain_enumeration_result()
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
+        General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
+        # self.__Httpx()
 
 ###################### CRAWLING ######################
 class Crawling:
@@ -81,21 +80,20 @@ class Crawling:
         Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
 
     def Execute(self):
-        if GlobalEnv.GetDoCrawling():
-            self.__prepare()
-            try:
-                with open(
-                    f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
-                ) as f:
-                    for line in f:
-                        url = (((str(line)).split(" ["))[0]).strip()
-                        General.commandsExecuter(Commands.KatanaCommands(url), GlobalEnv.GetCrawlingFolderPath(), "katana")
-                        General.commandsExecuter(Commands.GauCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gau")
-                        General.commandsExecuter(Commands.GoSpiderCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gospider", "json")
-                General.commandsExecuter(Commands.WaybackurlsCommands(url), GlobalEnv.GetCrawlingFolderPath(), "waybackurls")
-                General.FilterResultFile(GlobalEnv.GetWaybackurls())
-            except Exception as e:
-                print(f"Error running: {str(e)}")
+        self.__prepare()
+        try:
+            with open(
+                f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
+            ) as f:
+                for line in f:
+                    url = (((str(line)).split(" ["))[0]).strip()
+                    General.commandsExecuter(Commands.KatanaCommands(url), GlobalEnv.GetCrawlingFolderPath(), "katana")
+                    General.commandsExecuter(Commands.GauCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gau")
+                    General.commandsExecuter(Commands.GoSpiderCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gospider", "json")
+            General.commandsExecuter(Commands.WaybackurlsCommands(url), GlobalEnv.GetCrawlingFolderPath(), "waybackurls")
+            General.FilterResultFile(GlobalEnv.GetWaybackurls())
+        except Exception as e:
+            print(f"Error running: {str(e)}")
 
 ###################### PORT SCANNING ######################
 class PortScanning:
@@ -154,12 +152,11 @@ class PortScanning:
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
 
     def Execute(self):
-        if GlobalEnv.GetDoPortScanning():
-            self.__prepare()
-            self.__dnsRecords()
-            General.commandsExecuter(Commands.MasscanCommands(), GlobalEnv.GetPortScanningFolderPath(), "masscan")
-            General.commandsExecuter(Commands.NmapCommands(), GlobalEnv.GetPortScanningFolderPath(), "nmap")
-            General.commandsExecuter(Commands.NaabuCommands(), GlobalEnv.GetPortScanningFolderPath(), "naabu")
+        self.__prepare()
+        self.__dnsRecords()
+        General.commandsExecuter(Commands.MasscanCommands(), GlobalEnv.GetPortScanningFolderPath(), "masscan")
+        General.commandsExecuter(Commands.NmapCommands(), GlobalEnv.GetPortScanningFolderPath(), "nmap")
+        General.commandsExecuter(Commands.NaabuCommands(), GlobalEnv.GetPortScanningFolderPath(), "naabu")
 
 ###################### SCREENSHOT ######################
 class ScreenShot:
@@ -181,9 +178,8 @@ class ScreenShot:
             General.ExecuteCommand(c)
 
     def Execute(self):
-        if GlobalEnv.GetTakeScreenShots():
-            self.__prepareOperation()
-            self.__TakeSubdomainsScreenshot()
+        self.__prepareOperation()
+        self.__TakeSubdomainsScreenshot()
 
 ###################### FUZZING ######################
 class Fuzzing:
@@ -191,12 +187,11 @@ class Fuzzing:
         pass
     
     def Execute(self):
-        if GlobalEnv.GetDoFuzzing():
-            try:
-                with open(f'{GlobalEnv.GetHttpx()}', 'r', encoding="utf-8", errors='ignore') as f:
-                    for line in f:
-                        url = (((str(line)).split(' ['))[0]).strip()
-                        General.commandsExecuter(Commands.FFUFCommands(url), GlobalEnv.GetFuzzingFolderPath(), "ffuf", "json")
-            except Exception as e:
-                print(f"Error running: {str(e)}")
+        try:
+            with open(f'{GlobalEnv.GetHttpx()}', 'r', encoding="utf-8", errors='ignore') as f:
+                for line in f:
+                    url = (((str(line)).split(' ['))[0]).strip()
+                    General.commandsExecuter(Commands.FFUFCommands(url), GlobalEnv.GetFuzzingFolderPath(), "ffuf", "json")
+        except Exception as e:
+            print(f"Error running: {str(e)}")
         

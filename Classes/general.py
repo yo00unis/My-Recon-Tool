@@ -226,4 +226,15 @@ class General:
             General.ExecuteCommand(c, outFile)
             i = i + 1
     
+    @staticmethod
+    def is_tool_installed(toolname:str):
+        if subprocess.run(["which", f"{toolname}"], capture_output=True).returncode == 0:
+            return True
+        return False
+    
+    @staticmethod
+    def is_tool_in_path(self, path_to_check: str):
+        path_dirs = os.environ.get("PATH", "").split(":")
+        return path_to_check in path_dirs
+    
 
