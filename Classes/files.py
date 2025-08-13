@@ -122,6 +122,7 @@ class Files:
     def WriteToFile(path, mode, line:str):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             f.write(f'{line}\n')
+        Files.RemoveDuplicateFromFile(path)
 
     @staticmethod
     def WriteToPortScanningTargetFile():
@@ -162,14 +163,17 @@ class Files:
 
     @staticmethod
     def RemoveDuplicateFromFile(path):
-        seen = set()
-        unique_lines = []
+        try:
+            seen = set()
+            unique_lines = []
 
-        with open(path, 'r') as infile:
-            for line in infile:
-                if line not in seen:
-                    seen.add(line)
-                    unique_lines.append(line)
+            with open(path, 'r') as infile:
+                for line in infile:
+                    if line not in seen:
+                        seen.add(line)
+                        unique_lines.append(line)
 
-        with open(path, 'w') as outfile:
-            outfile.writelines(unique_lines)
+            with open(path, 'w') as outfile:
+                outfile.writelines(unique_lines)
+        except(FileNotFoundError):
+            pass

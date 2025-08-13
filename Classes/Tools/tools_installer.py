@@ -233,7 +233,7 @@ class WindowsInstaller:
             os.system("pipx install dnspython")
 
     def Execute(self):
-        self.__installScoope()
+        # self.__installScoope()
         self.__installPipx()
         self.__installSublister()
         self.__installPipLibraries()

@@ -87,17 +87,20 @@ class Config:
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}portScanning")
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}crawling")
         Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}fuzzing")
+        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}subdomains/httpx")
         
         # set result folders
         GlobalEnv.SetSubDomainsFolderPath(f"{GlobalEnv.GetResultFolder()}subdomains")
         GlobalEnv.SetPortScanningFolderPath(f"{GlobalEnv.GetResultFolder()}portScanning")
         GlobalEnv.SetCrawlingFolderPath(f"{GlobalEnv.GetResultFolder()}crawling")
         GlobalEnv.SetFuzzingFolderPath(f"{GlobalEnv.GetResultFolder()}fuzzing")
+        GlobalEnv.SetHttpxPath(f"{GlobalEnv.GetResultFolder()}subdomains/httpx")
 
         # Set log file and base file containing all results in the folder
         GlobalEnv.SetLogFile(f"{GlobalEnv.GetResultFolder()}logs.txt")
 
         GlobalEnv.SetSubDomainsPath(f"{GlobalEnv.GetResultFolder()}subdomains/subdomains.txt")
+        GlobalEnv.SetDNSPath(f"{GlobalEnv.GetResultFolder()}portScanning/dns.json")
 
         GlobalEnv.SetCrtSH(f"{GlobalEnv.GetResultFolder()}subdomains/crtSH.json")
         GlobalEnv.SetCrtShText(f"{GlobalEnv.GetResultFolder()}subdomains/crtSHtext.txt")
@@ -122,9 +125,7 @@ class Config:
 
     @staticmethod
     def __CheckDoSubdomainEnumerationConfig():
-        # append domain to httpx if config domain not wildcard
-        if not GlobalEnv.GetDoSubdomainEnumeration():
-            Files.WriteToFile(GlobalEnv.GetHttpx(), "a", GlobalEnv.GetDomain())
+        pass
 
     @staticmethod
     def LoadConfig():

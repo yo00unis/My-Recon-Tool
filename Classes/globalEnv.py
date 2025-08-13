@@ -26,6 +26,24 @@ class GlobalEnv:
     __tempJson = f""
     __dnsRecords = f""
     __gowitness = ""
+    __httpx_path = ""
+    __dns_path = ""
+
+    @staticmethod
+    def SetDNSPath(rf:str):
+        GlobalEnv.__dns_path = rf.strip()
+
+    @staticmethod
+    def GetDNSPath():
+        return GlobalEnv.__dns_path
+
+    @staticmethod
+    def SetHttpxPath(rf:str):
+        GlobalEnv.__httpx_path = rf.strip()
+
+    @staticmethod
+    def GetHttpxPath():
+        return GlobalEnv.__httpx_path
 
     # screenshot tools
     @staticmethod

@@ -1,6 +1,7 @@
 
+import json
 import os
-import dns
+import dns.resolver
 from Classes.commands import Commands
 from Classes.files import Files
 from Classes.request import Requests
@@ -13,45 +14,18 @@ class SubdomainEnumeration:
         self.__crtSHsiteUrl = f'https://crt.sh/json?q='
 
     def __CrtSh(self):
-        response = Requests.Get(url=f"{self.__crtSHsiteUrl}{GlobalEnv.GetDomain()}")
+        response = Requests.send("GET", url=f"{self.__crtSHsiteUrl}{GlobalEnv.GetDomain()}")
         Files.SaveTextToFile(response.text, f"{GlobalEnv.GetCrtSH()}", 'w')
+        General.reformat_json_in_file(GlobalEnv.GetCrtSH(), GlobalEnv.GetCrtSH())
         Files.SaveTextToFile(response.text, f"{GlobalEnv.GetLogFile()}")
         if response.status_code == 200:
             domains = General.ExtractDomainsFromJsonFile(GlobalEnv.GetCrtSH())
             Files.WriteListToFile(GlobalEnv.GetSubDomainsPath(), 'a', domains)
             Files.WriteListToFile(GlobalEnv.GetCrtShText(), 'w', domains)
             General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetCrtShText())
+        else:
+            self.__CrtSh()
 
-    def __Httpx(self):
-        General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
-        commands = Commands.HttpxCommands()
-        i = 1
-        for c in commands:
-            if i == 1:
-                General.ExecuteCommand(c, GlobalEnv.GetHttpx())
-                Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx())
-            elif i == 2:
-                General.ExecuteCommand(c, GlobalEnv.GetHttpx2xx())
-                Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx2xx())
-                Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx2xx())
-            elif i == 3:
-                General.ExecuteCommand(c, GlobalEnv.GetHttpx3xx())
-                Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx3xx())
-                Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx3xx())
-            elif i == 4:
-                General.ExecuteCommand(c, GlobalEnv.GetHttpx4xx())
-                Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx4xx())
-                Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx4xx())
-            elif i == 5:
-                General.ExecuteCommand(c, GlobalEnv.GetHttpx5xx())
-                Files.CopyFromTo(GlobalEnv.GetTempFile(), GlobalEnv.GetHttpx5xx())
-                Files.RemoveDuplicateFromFile(GlobalEnv.GetHttpx5xx())
-            i += 1
-        urls = Files.ExtractUrlsFromFile(GlobalEnv.GetHttpx())
-        Files.WriteListToFile(GlobalEnv.GetEnhancedHttpx(), 'a', urls)
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetEnhancedHttpx())
-    
     def __compine_subdomain_enumeration_result(self):
         for filename in os.listdir(GlobalEnv.GetSubDomainsFolderPath()):
             file_path = os.path.join(GlobalEnv.GetSubDomainsFolderPath(), filename)
@@ -59,17 +33,35 @@ class SubdomainEnumeration:
             if os.path.isfile(file_path) and "httpx" not in file_path and "json" not in file_path:
                 Files.CopyFromTo(file_path, GlobalEnv.GetSubDomainsPath())
 
+    def __extract_urls_from_httpx_result(self):
+        path = f"{GlobalEnv.GetHttpxPath()}/httpx1.json"
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'w', '')
+        for item in data:
+            if 'www' in item['input']:
+                continue
+            if "input" in item:
+                Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', item['input'])
+
     def Execute(self):
         Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
         self.__CrtSh()
-        General.commandsExecuter(Commands.SubfinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "subfinder")
-        General.commandsExecuter(Commands.Sublist3rCommands(), GlobalEnv.GetSubDomainsFolderPath(), "sublist3r")
-        General.commandsExecuter(Commands.AssetFinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "assetfinder")
-        General.commandsExecuter(Commands.ChaosCommands(), GlobalEnv.GetSubDomainsFolderPath(), "chaos")
+        if General.is_tool_installed('subfinder'):
+            General.commandsExecuter(Commands.SubfinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "subfinder")
+        if General.is_tool_installed('sublist3r'):
+            General.commandsExecuter(Commands.Sublist3rCommands(), GlobalEnv.GetSubDomainsFolderPath(), "sublist3r")
+        if General.is_tool_installed('assetfinder'):
+            General.commandsExecuter(Commands.AssetFinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "assetfinder")
+        # General.commandsExecuter(Commands.ChaosCommands(), GlobalEnv.GetSubDomainsFolderPath(), "chaos")
         self.__compine_subdomain_enumeration_result()
         Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
         General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
-        # self.__Httpx()
+        if General.is_tool_installed('httpx'):
+            General.commandsExecuter(Commands.HttpxCommands(), GlobalEnv.GetHttpxPath(), "httpx", 'json', GlobalEnv.GetTempJson())
+        self.__extract_urls_from_httpx_result()
+        
 
 ###################### CRAWLING ######################
 class Crawling:
@@ -87,11 +79,15 @@ class Crawling:
             ) as f:
                 for line in f:
                     url = (((str(line)).split(" ["))[0]).strip()
-                    General.commandsExecuter(Commands.KatanaCommands(url), GlobalEnv.GetCrawlingFolderPath(), "katana")
-                    General.commandsExecuter(Commands.GauCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gau")
-                    General.commandsExecuter(Commands.GoSpiderCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gospider", "json")
-            General.commandsExecuter(Commands.WaybackurlsCommands(url), GlobalEnv.GetCrawlingFolderPath(), "waybackurls")
-            General.FilterResultFile(GlobalEnv.GetWaybackurls())
+                    if General.is_tool_installed('katana'):
+                        General.commandsExecuter(Commands.KatanaCommands(url), GlobalEnv.GetCrawlingFolderPath(), "katana")
+                    if General.is_tool_installed('gau'):
+                        General.commandsExecuter(Commands.GauCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gau")
+                    if General.is_tool_installed('gospider'):
+                        General.commandsExecuter(Commands.GoSpiderCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gospider", "json")
+            if General.is_tool_installed('waybackurls'):
+                General.commandsExecuter(Commands.WaybackurlsCommands(url), GlobalEnv.GetCrawlingFolderPath(), "waybackurls")
+            # General.FilterResultFile(GlobalEnv.GetWaybackurls())
         except Exception as e:
             print(f"Error running: {str(e)}")
 
@@ -122,55 +118,56 @@ class PortScanning:
 
     def __prepare(self):
         Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", GlobalEnv.GetDomain())
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
 
     def __dnsRecords(self):
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTargetDomains())
-        with open(GlobalEnv.GetPortScanningTargetDomains())as f:
+        results = [] 
+
+        with open(GlobalEnv.GetPortScanningTargetDomains()) as f:
             for d in f:
                 domain = d.strip()
                 flagForArecord = True
+                domain_result = {"domain": domain, "records": {}}  # dict للـ domain
+
                 for record_type in self.__record_types:
                     try:
                         answers = dns.resolver.resolve(domain, record_type)
-                        line = f"\n{record_type} Records for {domain}"
-                        print(line)
-                        Files.WriteToFile(GlobalEnv.GetDnsRecords(), 'a', line)
-                        Files.WriteToFile(GlobalEnv.GetLogFile(), 'a', line)
+                        domain_result["records"][record_type] = []
+
                         for rdata in answers:
-                            line = rdata.to_text()
-                            print(line)
-                            Files.WriteToFile(GlobalEnv.GetDnsRecords(), "a", line)
-                            Files.WriteToFile(GlobalEnv.GetLogFile(), "a", line)
+                            record_value = rdata.to_text()
+                            domain_result["records"][record_type].append(record_value)
+
                             if flagForArecord:
-                                Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', line)
+                                Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', record_value)
+
                         flagForArecord = False
+
                     except Exception as e:
-                        line = f"Error fetching {record_type} records: {e}"
-                        print(line)
-                        Files.WriteToFile(GlobalEnv.GetLogFile(), "a", line)
+                        domain_result["records"][record_type] = f"Error: {str(e)}"
+
+                results.append(domain_result)
+        # save json to file
+        with open(GlobalEnv.GetDNSPath(), "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=4, ensure_ascii=False)
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
 
     def Execute(self):
         self.__prepare()
         self.__dnsRecords()
-        General.commandsExecuter(Commands.MasscanCommands(), GlobalEnv.GetPortScanningFolderPath(), "masscan")
-        General.commandsExecuter(Commands.NmapCommands(), GlobalEnv.GetPortScanningFolderPath(), "nmap")
-        General.commandsExecuter(Commands.NaabuCommands(), GlobalEnv.GetPortScanningFolderPath(), "naabu")
+        if General.is_tool_installed('masscan'):
+            General.commandsExecuter(Commands.MasscanCommands(), GlobalEnv.GetPortScanningFolderPath(), "masscan")
+        if General.is_tool_installed('nmap'):
+            General.commandsExecuter(Commands.NmapCommands(), GlobalEnv.GetPortScanningFolderPath(), "nmap")
+        if General.is_tool_installed('naabu'):
+            General.commandsExecuter(Commands.NaabuCommands(), GlobalEnv.GetPortScanningFolderPath(), "naabu")
 
 ###################### SCREENSHOT ######################
 class ScreenShot:
     def __init__(self):
         pass
 
-    def __prepareOperation(self):
-        Files.WriteToFile(GlobalEnv.GetTempFile(), "w", "")
-        if GlobalEnv.GetDoSubdomainEnumeration() or Files.IsFileExists(GlobalEnv.GetEnhancedHttpx()):
-            Files.CopyFromTo(GlobalEnv.GetEnhancedHttpx(), GlobalEnv.GetTempFile())
-        else:
-            Files.WriteToFile(GlobalEnv.GetTempFile(), 'a', GlobalEnv.GetDomain())
-        
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetTempFile())
+    def __prepare(self):
+        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), "a", GlobalEnv.GetDomain())
 
     def __TakeSubdomainsScreenshot(self):
         commands = Commands.GowitnessCommands()
@@ -178,20 +175,25 @@ class ScreenShot:
             General.ExecuteCommand(c)
 
     def Execute(self):
-        self.__prepareOperation()
+        self.__prepare()
         self.__TakeSubdomainsScreenshot()
 
 ###################### FUZZING ######################
 class Fuzzing:
     def __init__(self):
         pass
+
+    def __prepare(self):
+        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), "a", GlobalEnv.GetDomain())
     
     def Execute(self):
+        self.__prepare()
         try:
-            with open(f'{GlobalEnv.GetHttpx()}', 'r', encoding="utf-8", errors='ignore') as f:
+            with open(f'{GlobalEnv.GetSubDomainsPath()}', 'r', encoding="utf-8", errors='ignore') as f:
                 for line in f:
                     url = (((str(line)).split(' ['))[0]).strip()
-                    General.commandsExecuter(Commands.FFUFCommands(url), GlobalEnv.GetFuzzingFolderPath(), "ffuf", "json")
+                    if General.is_tool_installed('ffuf'):
+                        General.commandsExecuter(Commands.FFUFCommands(url), GlobalEnv.GetFuzzingFolderPath(), "ffuf", "json")
         except Exception as e:
             print(f"Error running: {str(e)}")
         

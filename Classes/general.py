@@ -1,8 +1,10 @@
 import io
 import json
 import os
+from pathlib import Path
 import platform
 import re
+import shutil
 import socket
 import subprocess
 import sys
@@ -86,13 +88,16 @@ class General:
         return s.strip()
 
     @staticmethod
-    def ExecuteCommand(cmd:str, outputFile:str=''):
-        subprocess.run(cmd, shell=True, check=True)
+    def ExecuteCommand(cmd:str, outputFile:str='', tmpfile:str=''):
         if outputFile == '':
             return
-        else:
-            Files.CopyFromTo(GlobalEnv.GetTempFile(), outputFile)    
+        subprocess.run(cmd, shell=True, check=True)
+        if tmpfile == '':
+            tmpfile = GlobalEnv.GetTempFile()   
+        Files.CopyFromTo(tmpfile, outputFile)
         Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+        if 'json' in outputFile:
+            General.reformat_json_in_file(outputFile, outputFile)
 
     @staticmethod
     def GetUrlFromDomain(url):
@@ -218,23 +223,80 @@ class General:
         return sorted(set(domains))
 
     @staticmethod
-    def commandsExecuter(func, path:str, toolname:str, ext:str="txt"):
+    def commandsExecuter(func, path:str, toolname:str, ext:str="txt", tmpfile:str=""):
         i = 1
         commands = func
         for c in commands:
             outFile = f"{path}/{toolname}{i}.{ext}"
-            General.ExecuteCommand(c, outFile)
+            if not Files.IsFileExists(outFile):
+                Files.CreateFile(outFile)
+            General.ExecuteCommand(c, outFile, tmpfile=tmpfile)
             i = i + 1
     
     @staticmethod
     def is_tool_installed(toolname:str):
-        if subprocess.run(["which", f"{toolname}"], capture_output=True).returncode == 0:
-            return True
-        return False
+        return shutil.which(toolname) is not None
+        # if subprocess.run(["which", f"{toolname}"], capture_output=True).returncode == 0:
+        #     return True
+        # return False
     
     @staticmethod
     def is_tool_in_path(self, path_to_check: str):
         path_dirs = os.environ.get("PATH", "").split(":")
         return path_to_check in path_dirs
+    
+    @staticmethod
+    def reformat_json_in_file(input_file:str, output_file:str):
+        General.fix_json_file(input_file, output_file)
+        # Load JSON data from file
+        with open(input_file, "r") as f:
+            data = json.load(f)  # Parse JSON
+
+        # Write reformatted JSON (indented, sorted keys)
+        with open(output_file, "w") as f:
+            json.dump(data, f, indent=4, sort_keys=True)  # Pretty-print
+    
+    @staticmethod
+    def fix_json_file(input_file:str, output_file:str):
+        try:
+            content = Path(input_file).read_text(encoding='utf-8').strip()
+            
+            if content.startswith('[') and content.endswith(']'):
+                content = content[1:-1]
+            
+            objects = []
+            buffer = ""
+            brace_count = 0
+            
+            for char in content:
+                if char == '{':
+                    brace_count += 1
+                    buffer += char
+                elif char == '}':
+                    brace_count -= 1
+                    buffer += char
+                    if brace_count == 0:
+                        objects.append(buffer)
+                        buffer = ""
+                elif brace_count > 0:
+                    buffer += char
+            
+            valid_objects = []
+            for obj in objects:
+                try:
+                    valid_objects.append(json.loads(obj))
+                except json.JSONDecodeError:
+                    continue
+            
+            Path(output_file).write_text(
+                json.dumps(valid_objects, indent=4, ensure_ascii=False),
+                encoding='utf-8'
+            )
+            
+            return True
+        
+        except Exception as e:
+            print(f"Error fixing JSON file: {str(e)}")
+            return False
     
 
