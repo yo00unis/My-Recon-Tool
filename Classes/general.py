@@ -101,10 +101,10 @@ class General:
 
     @staticmethod
     def ExecuteCommandNotmp(cmd:str, outputFile:str=''):
-        if outputFile == '':
-            return
+        print(f"[+] Running Command: {cmd}")
         os.system(cmd)
-        Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+        if outputFile != '':
+            Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
 
     @staticmethod
     def GetUrlFromDomain(url):

@@ -7,11 +7,43 @@ from Classes.files import Files
 from Classes.request import Requests
 from Classes.general import General
 from Classes.globalEnv import GlobalEnv
+from concurrent.futures import ThreadPoolExecutor
+
 
 ###################### SUBDOMAIN ENUMERATION ######################
 class SubdomainEnumeration:
     def __init__(self):
         self.__crtSHsiteUrl = f'https://crt.sh/json?q='
+        self.__commands = [
+            f'subfinder -d {GlobalEnv.GetDomain()} -all -o {GlobalEnv.GetSubDomainsFolderPath()}/subfinder.txt',
+            f"sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetSubDomainsFolderPath()}/sublist3r.txt",
+            f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetSubDomainsFolderPath()}/assetfinder.txt',
+        ]
+        self.__f = os.path.abspath(f"{GlobalEnv.GetHttpxPath()}/httpx.json")
+        self.__httpx_path = f'{GlobalEnv.GetHttpxPath()}'
+        self.__httpx_filters = [
+            f'jq "[.[] | select(.status_code >= 200 and .status_code < 300)]" "{self.__f}" > {self.__httpx_path}/2xx_responses.json',
+            f'jq "[.[] | select(.status_code >= 300 and .status_code < 400)]" "{self.__f}" > {self.__httpx_path}/3xx_responses.json',
+            f'jq "[.[] | select(.status_code >= 400 and .status_code < 500)]" "{self.__f}" > {self.__httpx_path}/4xx_responses.json',
+            f'jq "[.[] | select(.status_code >= 500 and .status_code < 600)]" "{self.__f}" > {self.__httpx_path}/5xx_responses.json',
+            f'jq "[.[] | select(.cdn_name == \\"cloudflare\\")]" "{self.__f}" > {self.__httpx_path}/cloudflare_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"algolia\\"))]" "{self.__f}" > {self.__httpx_path}/algolia_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"hsts\\"))]" "{self.__f}" > {self.__httpx_path}/hsts_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"jsdelivr\\"))]" "{self.__f}" > {self.__httpx_path}/jsdelivr_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"drupal\\"))]" "{self.__f}" > {self.__httpx_path}/drupal_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"fastly\\"))]" "{self.__f}" > {self.__httpx_path}/fastly_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"Google Tag Manager\\"))]" "{self.__f}" > {self.__httpx_path}/GoogleTagManager_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"mariadb\\"))]" "{self.__f}" > {self.__httpx_path}/MariaDB_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"PHP\\"))]" "{self.__f}" > {self.__httpx_path}/php_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"Pantheon\\"))]" "{self.__f}" > {self.__httpx_path}/pantheon_tech.json',
+            f'jq "[.[] | select(.tech[] | contains(\\"Varnish\\"))]" "{self.__f}" > {self.__httpx_path}/varnish_tech.json',
+            f'jq "[.[] | select(.webserver == \\"cloudflare\\")]" "{self.__f}" > {self.__httpx_path}/cloudflare_webserver.json',
+            f'jq "[.[] | select(.webserver == \\"nginx\\")]" "{self.__f}" > {self.__httpx_path}/nginx_webserver.json',
+            f'jq "[.[] | select(.webserver == \\"iis\\")]" "{self.__f}" > {self.__httpx_path}/iis_webserver.json',
+            f'jq "[.[] | select(.webserver == \\"apache\\")]" "{self.__f}" > {self.__httpx_path}/apache_webserver.json',
+            f'jq "[.[] | select(.webserver == \\"litespeed\\")]" "{self.__f}" > {self.__httpx_path}/litespeed_webserver.json',
+            f'jq "[.[] | select(.webserver == \\"caddy\\")]" "{self.__f}" > {self.__httpx_path}/caddy_webserver.json'
+        ]   
 
     def __CrtSh(self):
         response = Requests.send("GET", url=f"{self.__crtSHsiteUrl}{GlobalEnv.GetDomain()}")
@@ -35,7 +67,7 @@ class SubdomainEnumeration:
 
     # get valid urls from httpx result
     def __extract_urls_from_httpx_result(self):
-        path = f"{GlobalEnv.GetHttpxPath()}/httpx1.json"
+        path = f"{GlobalEnv.GetHttpxPath()}/httpx.json"
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         
@@ -56,46 +88,28 @@ class SubdomainEnumeration:
         General.ExecuteCommandNotmp(c, f)
 
     def __filter_httpx_results(self):
-        f = os.path.abspath(f"{GlobalEnv.GetHttpxPath()}/httpx1.json")
-        httpx_path = f'{GlobalEnv.GetHttpxPath()}'
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.status_code >= 200 and .status_code < 300)]" "{f}" > {httpx_path}/2xx_responses.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.status_code >= 300 and .status_code < 400)]" "{f}" > {httpx_path}/3xx_responses.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.status_code >= 400 and .status_code < 500)]" "{f}" > {httpx_path}/4xx_responses.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.status_code >= 500 and .status_code < 600)]" "{f}" > {httpx_path}/5xx_responses.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.cdn_name == \\"cloudflare\\")]" "{f}" > {httpx_path}/cloudflare_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"algolia\\"))]" "{f}" > {httpx_path}/algolia_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"hsts\\"))]" "{f}" > {httpx_path}/hsts_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"jsdelivr\\"))]" "{f}" > {httpx_path}/jsdelivr_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"drupal\\"))]" "{f}" > {httpx_path}/drupal_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"fastly\\"))]" "{f}" > {httpx_path}/fastly_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"Google Tag Manager\\"))]" "{f}" > {httpx_path}/GoogleTagManager_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"mariadb\\"))]" "{f}" > {httpx_path}/MariaDB_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"PHP\\"))]" "{f}" > {httpx_path}/php_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"Pantheon\\"))]" "{f}" > {httpx_path}/pantheon_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.tech[] | contains(\\"Varnish\\"))]" "{f}" > {httpx_path}/varnish_tech.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"cloudflare\\")]" "{f}" > {httpx_path}/cloudflare_webserver.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"nginx\\")]" "{f}" > {httpx_path}/nginx_webserver.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"iis\\")]" "{f}" > {httpx_path}/iis_webserver.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"apache\\")]" "{f}" > {httpx_path}/apache_webserver.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"litespeed\\")]" "{f}" > {httpx_path}/litespeed_webserver.json')
-        self.__execute_httpx_filter_command(f'jq "[.[] | select(.webserver == \\"caddy\\")]" "{f}" > {httpx_path}/caddy_webserver.json')
+        with ThreadPoolExecutor() as executer:
+            executer.map(self.__execute_httpx_filter_command, self.__httpx_filters)
     
     def Execute(self):
         Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
-        self.__CrtSh()
-        if General.is_tool_installed('subfinder'):
-            General.commandsExecuter(Commands.SubfinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "subfinder")
-        if General.is_tool_installed('sublist3r'):
-            General.commandsExecuter(Commands.Sublist3rCommands(), GlobalEnv.GetSubDomainsFolderPath(), "sublist3r")
-        if General.is_tool_installed('assetfinder'):
-            General.commandsExecuter(Commands.AssetFinderCommands(), GlobalEnv.GetSubDomainsFolderPath(), "assetfinder")
-        # General.commandsExecuter(Commands.ChaosCommands(), GlobalEnv.GetSubDomainsFolderPath(), "chaos")
+
+        with ThreadPoolExecutor() as executer:
+            executer.submit(self.__CrtSh)
+            executer.map(General.ExecuteCommandNotmp, self.__commands)
+
         self.__compine_subdomain_enumeration_result()
         Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
         General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
+
         if General.is_tool_installed('httpx'):
-            General.commandsExecuter(Commands.HttpxCommands(), GlobalEnv.GetHttpxPath(), "httpx", 'json', GlobalEnv.GetTempJson())
+            outputFile = f"{GlobalEnv.GetHttpxPath()}/httpx.json"
+            cmd = f"httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -title -tech-detect -follow-redirects -json -o {outputFile}"
+            General.ExecuteCommandNotmp(cmd)
+            General.reformat_json_in_file(outputFile, outputFile)
+
         self.__extract_urls_from_httpx_result()
+
         if General.is_tool_installed('jq'):
             self.__filter_httpx_results()
         
@@ -112,7 +126,7 @@ class Crawling:
         self.__prepare()
         try:
             with open(
-                f"{GlobalEnv.GetHttpx()}", "r", encoding="utf-8", errors="ignore"
+                f"{GlobalEnv.GetSubDomainsPath()}", "r", encoding="utf-8", errors="ignore"
             ) as f:
                 for line in f:
                     url = (((str(line)).split(" ["))[0]).strip()
