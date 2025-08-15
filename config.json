@@ -2,10 +2,10 @@
 	"ResultDirectory":"ReconResult",
 	"Domain":"hackerone.com",
 	"DoSubdomainEnumeration":"1",
-	"TakeScreenShots":"1",
-	"DoPortScanning":"1",
+	"TakeScreenShots":"0",
+	"DoPortScanning":"0",
 	"Ports":"443,80",
-	"DoCrawling":"1",
-	"DoFuzzing":"1",
+	"DoCrawling":"0",
+	"DoFuzzing":"0",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt"
 }

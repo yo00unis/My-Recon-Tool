@@ -100,6 +100,13 @@ class General:
             General.reformat_json_in_file(outputFile, outputFile)
 
     @staticmethod
+    def ExecuteCommandNotmp(cmd:str, outputFile:str=''):
+        if outputFile == '':
+            return
+        os.system(cmd)
+        Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+
+    @staticmethod
     def GetUrlFromDomain(url):
         # Add 'https://' if missing to ensure urlparse works correctly
         if not url.startswith(('http://', 'https://')):
