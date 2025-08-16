@@ -123,6 +123,11 @@ class Files:
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             f.write(f'{line}\n')
         Files.RemoveDuplicateFromFile(path)
+    
+    @staticmethod
+    def WriteToFileWithDuplicates(path, mode, line:str):
+        with open(path, mode, encoding="utf-8", errors='ignore') as f:
+            f.write(f'{line}\n')
 
     @staticmethod
     def WriteToPortScanningTargetFile():

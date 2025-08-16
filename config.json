@@ -3,9 +3,9 @@
 	"Domain":"hackerone.com",
 	"DoSubdomainEnumeration":"0",
 	"TakeScreenShots":"0",
-	"DoPortScanning":"1",
+	"DoPortScanning":"0",
 	"Ports":"443,80",
-	"DoCrawling":"0",
+	"DoCrawling":"1",
 	"DoFuzzing":"0",
 	"FuzzingWordlist":"directory-list-2.3-medium.txt",
 	"MaxThreads":"10"

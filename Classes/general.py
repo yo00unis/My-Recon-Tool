@@ -316,4 +316,11 @@ class General:
         except:
             return 10
     
+    @staticmethod
+    def is_valid_url(url):
+        try:
+            parsed = urlparse(url)
+            return all([parsed.scheme, parsed.netloc])
+        except:
+            return False
 

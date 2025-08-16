@@ -1,6 +1,7 @@
 
 import json
 import os
+import threading
 import dns.resolver
 from Classes.commands import Commands
 from Classes.files import Files
@@ -123,13 +124,13 @@ class SubdomainEnumeration:
 ###################### CRAWLING ######################
 class Crawling:
     def __init__(self):
-        pass
+        self.__lock = threading.Lock()
 
-    def __commands(self, url):
+    def __commands(self, url:str):
         return [
-            ('katana', f'katana -u {General.GetStrippedString(url)} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetCrawlingFolderPath()}/katana.txt'),
-            ('gau', f'gau {url} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetCrawlingFolderPath()}/gau.txt'),
-            ('gospider', f'gospider -s {url} -d 100 -t 15 -c 5 --delay 1 --subs --js --other-source --robots --sitemap --user-agent --include-subs --verbose --output {GlobalEnv.GetCrawlingFolderPath()}/gospider')
+            ('katana', f'katana -u {url.strip()} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetCrawlingFolderPath()}/katana.txt'),
+            ('gau', f'gau {url.strip()} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetCrawlingFolderPath()}/gau.txt'),
+            ('gospider', f'gospider -s {url.strip()} -d 100 -t 15 -c 5 --delay 1 --subs --js --other-source --robots --sitemap --user-agent --include-subs --verbose --output {GlobalEnv.GetCrawlingFolderPath()}/gospider')
         ]
 
     def __run_tools_for_url(self, url):
@@ -146,23 +147,67 @@ class Crawling:
         except Exception as e:
             print(f"Error processing {url}: {e}")
     
+    def __process_url(self, url:str):
+        result_file = f'{GlobalEnv.GetCrawlingFolderPath()}/filtered_waybackurls.txt'
+        if not General.is_valid_url(url) or url.endswith((".js", ".css", ".png", ".jpg", ".svg")):
+            return
+        try:
+            response = Requests.Get(url, timeout=5)
+            status = response.status_code
+            if status < 403 and status not in [404, 429]:
+                with self.__lock:
+                    Files.WriteToFileWithDuplicates(result_file, 'a', url)
+        except:
+            pass
+
+    def __filter_waybackurls_result(self):
+        file = f'{GlobalEnv.GetCrawlingFolderPath()}/waybackurls.txt'
+
+        with open(file, "r", encoding="utf-8", errors="ignore") as f, \
+            ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+
+            futures = []
+
+            for line in f:
+                url = line.strip()
+                if url:
+                    futures.append(executor.submit(self.__process_url, url))
+
+            for future in futures:
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Error processing wayback URL: {e}")
+
+    def __run_wayback_and_filter(self, executor):
+        if General.is_tool_installed('waybackurls'):
+            cmd = f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetCrawlingFolderPath()}/waybackurls.txt'
+            wayback_future = executor.submit(General.ExecuteCommandNotmp, cmd)
+            wayback_future.result()
+            return executor.submit(self.__filter_waybackurls_result)
+        return None
+
     def Execute(self):
         try:
-            with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
-                urls = [(((str(line)).split(" ["))[0]).strip() for line in f]
-            
-            tasks = [(self.__run_tools_for_url, url) for url in urls]
-            if General.is_tool_installed('waybackurls'):
-                cmd = f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetCrawlingFolderPath()}/waybackurls.txt'
-                tasks.append((General.ExecuteCommandNotmp, cmd))
+            filter_future = None
 
             with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
-                futures = [executor.submit(func, arg) for func, arg in tasks]
-                for future in futures:
-                    try:
-                        future.result() 
-                    except Exception as e:
-                        print(f"Error in task: {e}")
+                filter_future = self.__run_wayback_and_filter(executor)
+
+                with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
+                    for line in f:
+                        url = line.strip().split(" [")[0].strip()
+                        if not url:
+                            continue
+
+                        # أضف https:// لو مفيش
+                        if not url.startswith("http://") and not url.startswith("https://"):
+                            url = f"https://{url}"
+
+                        executor.submit(self.__run_tools_for_url, url)
+
+                if filter_future:
+                    filter_future.result()
 
         except Exception as e:
             print(f"Error in Execute: {e}")
@@ -344,18 +389,17 @@ class Fuzzing:
 
     def Execute(self):
         try:
-            with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
-                urls = [(((str(line)).split(' ['))[0]).strip() for line in f]
-            
-            tasks = [(self.__run_tools_for_url, url) for url in urls]
-
             with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
-                futures = [executor.submit(func, arg) for func, arg in tasks]
-                for future in futures:
-                    try:
-                        future.result() 
-                    except Exception as e:
-                        print(f"Error in task: {e}")
+                with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
+                    for line in f:
+                        url = line.strip().split(' [')[0].strip()
+                        if not url:
+                            continue
+
+                        if not url.startswith("http://") and not url.startswith("https://"):
+                            url = f"https://{url}"
+
+                        executor.submit(self.__run_tools_for_url, url)
 
         except Exception as e:
             print(f"Error in Execute: {e}")
