@@ -1,11 +1,12 @@
 {
 	"ResultDirectory":"ReconResult",
 	"Domain":"hackerone.com",
-	"DoSubdomainEnumeration":"1",
+	"DoSubdomainEnumeration":"0",
 	"TakeScreenShots":"0",
-	"DoPortScanning":"0",
+	"DoPortScanning":"1",
 	"Ports":"443,80",
 	"DoCrawling":"0",
 	"DoFuzzing":"0",
-	"FuzzingWordlist":"directory-list-2.3-medium.txt"
+	"FuzzingWordlist":"directory-list-2.3-medium.txt",
+	"MaxThreads":"10"
 }

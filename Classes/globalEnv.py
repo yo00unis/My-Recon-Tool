@@ -28,6 +28,15 @@ class GlobalEnv:
     __gowitness = ""
     __httpx_path = ""
     __dns_path = ""
+    __max_threads = ""
+
+    @staticmethod
+    def SetMaxThreads(rf:str):
+        GlobalEnv.__max_threads = rf.strip()
+
+    @staticmethod
+    def GetMaxThreads():
+        return GlobalEnv.__max_threads
 
     @staticmethod
     def SetDNSPath(rf:str):

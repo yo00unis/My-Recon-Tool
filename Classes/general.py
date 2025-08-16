@@ -306,4 +306,14 @@ class General:
             print(f"Error fixing JSON file: {str(e)}")
             return False
     
+    @staticmethod
+    def GetMaxThreadsNumber():
+        try:
+            threads = int(GlobalEnv.GetMaxThreads()) 
+            if threads > 15:
+                return 15
+            return threads
+        except:
+            return 10
+    
 

@@ -53,6 +53,7 @@ class Config:
             GlobalEnv.SetDoPortScanning(data["DoPortScanning"])
             GlobalEnv.SetDoCrawling(data["DoCrawling"])
             GlobalEnv.SetDoFuzzing(data["DoFuzzing"])
+            GlobalEnv.SetMaxThreads(data["MaxThreads"])
 
             if len(GlobalEnv.GetResultFolder()) == 0:
                 General.ReadResultDirectory()

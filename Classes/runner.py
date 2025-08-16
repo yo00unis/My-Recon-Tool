@@ -1,6 +1,8 @@
+from concurrent.futures import ThreadPoolExecutor
 from Classes.Config import Config
 from Classes.Tools.tools_execution import Crawling, Fuzzing, PortScanning, ScreenShot, SubdomainEnumeration
 from Classes.Tools.tools_installer import LinuxInstaller, WindowsInstaller
+from Classes.files import Files
 from Classes.general import General
 from Classes.globalEnv import GlobalEnv
 
@@ -16,18 +18,36 @@ class Runner:
         self.__windowsInstaller = WindowsInstaller()
         self.__linuxInstaller = LinuxInstaller()
 
+    def __prepare(self):
+        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
+
     def Execute(self):
+        self.__prepare()
+
         if General.GetOStype() == "Windows":
             self.__windowsInstaller.Execute()
         if General.GetOStype() == "Linux":
             self.__linuxInstaller.Execute()
+        
         if GlobalEnv.GetDoSubdomainEnumeration():
             self.__subdomainEnumeration.Execute()
+
+        tasks = []
+
         if GlobalEnv.GetTakeScreenShots():
+            tasks.append(self.__screenshot.Execute)
             self.__screenshot.Execute()
         if GlobalEnv.GetDoPortScanning():
-            self.__portScanning.Execute()
+            tasks.append(self.__portScanning.Execute)
         if GlobalEnv.GetDoCrawling():
-            self.__crawling.Execute()
+            tasks.append(self.__crawling.Execute)
         if GlobalEnv.GetDoFuzzing():
-            self.__fuzzing.Execute()
+            tasks.append(self.__fuzzing.Execute)
+        
+        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+            futures = [executor.submit(task) for task in tasks]
+            for future in futures:
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Error in module: {e}")

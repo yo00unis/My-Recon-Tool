@@ -14,11 +14,6 @@ from concurrent.futures import ThreadPoolExecutor
 class SubdomainEnumeration:
     def __init__(self):
         self.__crtSHsiteUrl = f'https://crt.sh/json?q='
-        self.__commands = [
-            f'subfinder -d {GlobalEnv.GetDomain()} -all -o {GlobalEnv.GetSubDomainsFolderPath()}/subfinder.txt',
-            f"sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetSubDomainsFolderPath()}/sublist3r.txt",
-            f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetSubDomainsFolderPath()}/assetfinder.txt',
-        ]
         self.__f = os.path.abspath(f"{GlobalEnv.GetHttpxPath()}/httpx.json")
         self.__httpx_path = f'{GlobalEnv.GetHttpxPath()}'
         self.__httpx_filters = [
@@ -44,6 +39,13 @@ class SubdomainEnumeration:
             f'jq "[.[] | select(.webserver == \\"litespeed\\")]" "{self.__f}" > {self.__httpx_path}/litespeed_webserver.json',
             f'jq "[.[] | select(.webserver == \\"caddy\\")]" "{self.__f}" > {self.__httpx_path}/caddy_webserver.json'
         ]   
+
+    def __commands(self):
+        return [
+            ('subfinder', f'subfinder -d {GlobalEnv.GetDomain()} -all -o {GlobalEnv.GetSubDomainsFolderPath()}/subfinder.txt'),
+            ('sublist3r', f"sublist3r -d {GlobalEnv.GetDomain()} -t 10 -o {GlobalEnv.GetSubDomainsFolderPath()}/sublist3r.txt"),
+            ('assetfinder', f'assetfinder {GlobalEnv.GetDomain()} > {GlobalEnv.GetSubDomainsFolderPath()}/assetfinder.txt')
+        ]
 
     def __CrtSh(self):
         response = Requests.send("GET", url=f"{self.__crtSHsiteUrl}{GlobalEnv.GetDomain()}")
@@ -88,22 +90,26 @@ class SubdomainEnumeration:
         General.ExecuteCommandNotmp(c, f)
 
     def __filter_httpx_results(self):
-        with ThreadPoolExecutor() as executer:
+        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executer:
             executer.map(self.__execute_httpx_filter_command, self.__httpx_filters)
     
     def Execute(self):
-        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
+        
+        commands_to_run = [
+            cmd for tool, cmd in self.__commands()
+            if General.is_tool_installed(tool)
+        ]
 
-        with ThreadPoolExecutor() as executer:
+        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executer:
             executer.submit(self.__CrtSh)
-            executer.map(General.ExecuteCommandNotmp, self.__commands)
+            executer.map(General.ExecuteCommandNotmp, commands_to_run)
 
         self.__compine_subdomain_enumeration_result()
         Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
         General.RemoveOutOfScopeFromSubdomains(GlobalEnv.GetSubDomainsPath())
 
         if General.is_tool_installed('httpx'):
-            outputFile = f"{GlobalEnv.GetHttpxPath()}/httpx.json"
+            outputFile = f"{self.__httpx_path}/httpx.json"
             cmd = f"httpx -l {GlobalEnv.GetSubDomainsPath()} -status-code -fc 404 -title -tech-detect -follow-redirects -json -o {outputFile}"
             General.ExecuteCommandNotmp(cmd)
             General.reformat_json_in_file(outputFile, outputFile)
@@ -119,28 +125,47 @@ class Crawling:
     def __init__(self):
         pass
 
-    def __prepare(self):
-        Files.RemoveDuplicateFromFile(GlobalEnv.GetSubDomainsPath())
+    def __commands(self, url):
+        return [
+            ('katana', f'katana -u {General.GetStrippedString(url)} -d 100 -jc -delay 1 -c 15 -o {GlobalEnv.GetCrawlingFolderPath()}/katana.txt'),
+            ('gau', f'gau {url} --subs --threads 15 --providers wayback,otx,commoncrawl --verbose --o {GlobalEnv.GetCrawlingFolderPath()}/gau.txt'),
+            ('gospider', f'gospider -s {url} -d 100 -t 15 -c 5 --delay 1 --subs --js --other-source --robots --sitemap --user-agent --include-subs --verbose --output {GlobalEnv.GetCrawlingFolderPath()}/gospider')
+        ]
 
-    def Execute(self):
-        self.__prepare()
+    def __run_tools_for_url(self, url):
         try:
-            with open(
-                f"{GlobalEnv.GetSubDomainsPath()}", "r", encoding="utf-8", errors="ignore"
-            ) as f:
-                for line in f:
-                    url = (((str(line)).split(" ["))[0]).strip()
-                    if General.is_tool_installed('katana'):
-                        General.commandsExecuter(Commands.KatanaCommands(url), GlobalEnv.GetCrawlingFolderPath(), "katana")
-                    if General.is_tool_installed('gau'):
-                        General.commandsExecuter(Commands.GauCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gau")
-                    if General.is_tool_installed('gospider'):
-                        General.commandsExecuter(Commands.GoSpiderCommands(url), GlobalEnv.GetCrawlingFolderPath(), "gospider", "json")
-            if General.is_tool_installed('waybackurls'):
-                General.commandsExecuter(Commands.WaybackurlsCommands(url), GlobalEnv.GetCrawlingFolderPath(), "waybackurls")
-            # General.FilterResultFile(GlobalEnv.GetWaybackurls())
+            commands_to_run = [
+                cmd for tool, cmd in self.__commands(url)
+                if General.is_tool_installed(tool)
+            ]
+            with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+                futures = [executor.submit(General.ExecuteCommandNotmp, cmd) for cmd in commands_to_run]
+                for future in futures:
+                    future.result()
+
         except Exception as e:
-            print(f"Error running: {str(e)}")
+            print(f"Error processing {url}: {e}")
+    
+    def Execute(self):
+        try:
+            with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
+                urls = [(((str(line)).split(" ["))[0]).strip() for line in f]
+            
+            tasks = [(self.__run_tools_for_url, url) for url in urls]
+            if General.is_tool_installed('waybackurls'):
+                cmd = f'waybackurls {GlobalEnv.GetDomain()} > {GlobalEnv.GetCrawlingFolderPath()}/waybackurls.txt'
+                tasks.append((General.ExecuteCommandNotmp, cmd))
+
+            with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+                futures = [executor.submit(func, arg) for func, arg in tasks]
+                for future in futures:
+                    try:
+                        future.result() 
+                    except Exception as e:
+                        print(f"Error in task: {e}")
+
+        except Exception as e:
+            print(f"Error in Execute: {e}")
 
 ###################### PORT SCANNING ######################
 class PortScanning:
@@ -167,16 +192,67 @@ class PortScanning:
         "TLSA",
     ]
 
-    def __prepare(self):
-        Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), "a", GlobalEnv.GetDomain())
+    def __NmapCommand(self):    
+        ports = GlobalEnv.GetPorts()
+        output_file = f"{GlobalEnv.GetPortScanningFolderPath()}/nmap.txt" 
+        if len(ports) > 0:
+            command = f'nmap -sA -sU -p {ports} -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {output_file}'
+        else:    
+            command = f'nmap -sA -sU --top-ports 100 -A -iL {GlobalEnv.GetPortScanningTarget()} -oN {output_file}'
+
+        return command
+
+    def __MasscanCommand(self):  
+        ports = GlobalEnv.GetPorts()
+        output_file = f"{GlobalEnv.GetPortScanningFolderPath()}/masscan.txt" 
+        if len(ports) > 0:
+            command = f'masscan -iL {GlobalEnv.GetPortScanningTarget()} -p {ports} > {output_file}'
+        else:    
+            command = f'masscan -p1-65535 -iL {GlobalEnv.GetPortScanningTarget()} > {output_file}'  
+
+        return command
+
+    def __NaabuCommand(self):  
+        ports = GlobalEnv.GetPorts()
+        output_file = f"{GlobalEnv.GetPortScanningFolderPath()}/naabu.txt" 
+        if len(ports)>0:
+            command = f'naabu -l {GlobalEnv.GetPortScanningTarget()} -p {ports} -o {output_file}'
+        else:
+            command = f'naabu -l {GlobalEnv.GetPortScanningTarget()} -top-ports 1000 -o {output_file}'
+        return command
+
+    def __commands(self):
+        return [
+            ('masscan', self.__MasscanCommand()),
+            ('nmap', self.__NmapCommand()),
+            ('naabu', self.__NaabuCommand())
+        ]
+
+    def __extractARecords(self):
+        a_records = []
+
+        with open(GlobalEnv.GetSubDomainsPath()) as f:
+            for d in f:
+                domain = d.strip()
+
+                try:
+                    answers = dns.resolver.resolve(domain, "A")
+                    for rdata in answers:
+                        a_records.append(rdata.to_text())
+                except Exception:
+                    continue  
+
+        for ip in a_records:
+            Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', ip)
+
+        Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
 
     def __dnsRecords(self):
         results = [] 
 
-        with open(GlobalEnv.GetPortScanningTargetDomains()) as f:
+        with open(GlobalEnv.GetSubDomainsPath()) as f:
             for d in f:
                 domain = d.strip()
-                flagForArecord = True
                 domain_result = {"domain": domain, "records": {}}  # dict للـ domain
 
                 for record_type in self.__record_types:
@@ -188,63 +264,99 @@ class PortScanning:
                             record_value = rdata.to_text()
                             domain_result["records"][record_type].append(record_value)
 
-                            if flagForArecord:
-                                Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', record_value)
-
-                        flagForArecord = False
-
                     except Exception as e:
                         domain_result["records"][record_type] = f"Error: {str(e)}"
 
                 results.append(domain_result)
+
         # save json to file
         with open(GlobalEnv.GetDNSPath(), "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4, ensure_ascii=False)
         Files.RemoveDuplicateFromFile(GlobalEnv.GetPortScanningTarget())
 
     def Execute(self):
-        self.__prepare()
-        self.__dnsRecords()
-        if General.is_tool_installed('masscan'):
-            General.commandsExecuter(Commands.MasscanCommands(), GlobalEnv.GetPortScanningFolderPath(), "masscan")
-        if General.is_tool_installed('nmap'):
-            General.commandsExecuter(Commands.NmapCommands(), GlobalEnv.GetPortScanningFolderPath(), "nmap")
-        if General.is_tool_installed('naabu'):
-            General.commandsExecuter(Commands.NaabuCommands(), GlobalEnv.GetPortScanningFolderPath(), "naabu")
+        self.__extractARecords()
+
+        commands_to_run = [
+            cmd for tool, cmd in self.__commands()
+            if General.is_tool_installed(tool)
+        ]
+
+        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executer:
+            for cmd in commands_to_run:
+                executer.submit(General.ExecuteCommandNotmp, cmd)
+            executer.submit(self.__dnsRecords)
 
 ###################### SCREENSHOT ######################
 class ScreenShot:
     def __init__(self):
         pass
-
-    def __prepare(self):
-        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), "a", GlobalEnv.GetDomain())
+    
+    def __commands(self):
+        return [
+            ('gowitness' , f'gowitness scan file --file "{GlobalEnv.GetSubDomainsPath()}" --write-none --screenshot-path "{GlobalEnv.GetGowitness()}"')
+        ]
 
     def __TakeSubdomainsScreenshot(self):
-        commands = Commands.GowitnessCommands()
-        for c in commands:
-            General.ExecuteCommand(c)
+        commands_to_run = [
+            cmd for tool, cmd in self.__commands()
+            if General.is_tool_installed(tool)
+        ]
+
+        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executer:
+            executer.map(General.ExecuteCommandNotmp, commands_to_run)
 
     def Execute(self):
-        self.__prepare()
         self.__TakeSubdomainsScreenshot()
 
 ###################### FUZZING ######################
 class Fuzzing:
     def __init__(self):
         pass
-
-    def __prepare(self):
-        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), "a", GlobalEnv.GetDomain())
     
-    def Execute(self):
-        self.__prepare()
+    def __FFUFCommand(self, url):  
+        if url.endswith('/'):
+            url += 'FUZZ'
+        else:
+            url += '/FUZZ'
+
+        return f'ffuf -u {url} -p 2 -r -w {GlobalEnv.GetFuffWordlist()} -rate 20 -recursion -o {GlobalEnv.GetFuzzingFolderPath()}/ffuf.json'
+        
+
+    def __commands(self, url):
+        return [
+            ('ffuf', self.__FFUFCommand(url))
+        ]
+
+    def __run_tools_for_url(self, url):
         try:
-            with open(f'{GlobalEnv.GetSubDomainsPath()}', 'r', encoding="utf-8", errors='ignore') as f:
-                for line in f:
-                    url = (((str(line)).split(' ['))[0]).strip()
-                    if General.is_tool_installed('ffuf'):
-                        General.commandsExecuter(Commands.FFUFCommands(url), GlobalEnv.GetFuzzingFolderPath(), "ffuf", "json")
+            commands_to_run = [
+                cmd for tool, cmd in self.__commands(url)
+                if General.is_tool_installed(tool)
+            ]
+            with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+                futures = [executor.submit(General.ExecuteCommandNotmp, cmd) for cmd in commands_to_run]
+                for future in futures:
+                    future.result()
+
         except Exception as e:
-            print(f"Error running: {str(e)}")
+            print(f"Error processing {url}: {e}")
+
+    def Execute(self):
+        try:
+            with open(GlobalEnv.GetSubDomainsPath(), "r", encoding="utf-8", errors="ignore") as f:
+                urls = [(((str(line)).split(' ['))[0]).strip() for line in f]
+            
+            tasks = [(self.__run_tools_for_url, url) for url in urls]
+
+            with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+                futures = [executor.submit(func, arg) for func, arg in tasks]
+                for future in futures:
+                    try:
+                        future.result() 
+                    except Exception as e:
+                        print(f"Error in task: {e}")
+
+        except Exception as e:
+            print(f"Error in Execute: {e}")
         
