@@ -1,4 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from Classes.Config import Config
 from Classes.Tools.tools_execution import Crawling, Fuzzing, PortScanning, ScreenShot, SubdomainEnumeration
 from Classes.Tools.tools_installer import LinuxInstaller, WindowsInstaller
@@ -26,7 +26,7 @@ class Runner:
 
         if General.GetOStype() == "Windows":
             self.__windowsInstaller.Execute()
-        if General.GetOStype() == "Linux":
+        elif General.GetOStype() == "Linux":
             self.__linuxInstaller.Execute()
         
         if GlobalEnv.GetDoSubdomainEnumeration():
@@ -36,7 +36,6 @@ class Runner:
 
         if GlobalEnv.GetTakeScreenShots():
             tasks.append(self.__screenshot.Execute)
-            self.__screenshot.Execute()
         if GlobalEnv.GetDoPortScanning():
             tasks.append(self.__portScanning.Execute)
         if GlobalEnv.GetDoCrawling():
@@ -46,7 +45,7 @@ class Runner:
         
         with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
             futures = [executor.submit(task) for task in tasks]
-            for future in futures:
+            for future in as_completed(futures):
                 try:
                     future.result()
                 except Exception as e:

@@ -188,9 +188,10 @@ class GoToolsInstaller:
             self.__install_go_language_windows()
         elif General.GetOStype() == "Linux":
             self.__install_go_language_linux()
+            
         self.__install_go_tool("subfinder", "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest")
         self.__install_go_tool("assetfinder", "go install github.com/tomnomnom/assetfinder@latest")
-        self.__install_go_tool("chaos", "go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest")
+        # self.__install_go_tool("chaos", "go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest")
         self.__install_go_tool("httpx", "go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest")
         self.__install_go_tool("naabu", "go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest")
         self.__install_go_tool("katana", "go install github.com/projectdiscovery/katana/cmd/katana@latest")
@@ -215,10 +216,14 @@ class WindowsInstaller:
 
     def __installPipx(self):
         if not General.is_tool_installed("pipx"):
-                os.system('pip install pipx')
-                user_bin = os.path.expandvars(r'%USERPROFILE%\.local\bin')
-                PathClass.add_path_to_user_path_windows(user_bin)
+            os.system('pip install pipx')
+            user_bin = os.path.expandvars(r'%USERPROFILE%\.local\bin')
+            PathClass.add_path_to_user_path_windows(user_bin)
         return True
+    
+    def __install_jq(self):
+        if not General.is_tool_installed("jq"):
+            os.system('scoop install jq')
     
     def __installSublister(self):
         if not General.is_tool_installed("sublist3r"):
@@ -233,7 +238,8 @@ class WindowsInstaller:
             os.system("pipx install dnspython")
 
     def Execute(self):
-        # self.__installScoope()
+        self.__installScoope()
+        self.__install_jq()
         self.__installPipx()
         self.__installSublister()
         self.__installPipLibraries()
@@ -276,8 +282,17 @@ class LinuxInstaller:
                 os.system("pipx install sublist3r")
         else:
             print("install pipx to install sublist3r")
+    
+    def __install_jq(self):
+        if not General.is_tool_installed("jq"):
+            # Debian/Ubuntu
+            self.__run("sudo apt update && sudo apt install -y jq")
+        else:
+            print("[+] jq already installed.")
 
     def Execute(self):
         self.__installPIPX()
         self.__installSublister()
+        self.__install_jq()
         self.__gotoolsinstaller.Execute()
+        
