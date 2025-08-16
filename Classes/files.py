@@ -1,29 +1,27 @@
 import os
 from pathlib import PurePath
 import re
-import shutil
 
 class Files:
     def __init__(self):
         pass
 
     @staticmethod
-    def IsFileEmpty(path):
+    def is_file_empty(path):
         return os.path.getsize(path) == 0
 
     @staticmethod
-    def GetNumberOfLines(path):
+    def number_of_lines(path):
         with open(f'{path}', 'r') as file:
             return len(file.readlines())
         return 0
 
     @staticmethod
-    def GetWorkingDirectory():
+    def working_directory():
         return os.getcwd() 
 
     @staticmethod        
-    def CreateFolder(path:str):
-        from Classes.general import General
+    def create_folder(path:str):
         if not os.path.isdir(path.strip()):
             try:
                 os.mkdir(path.strip())
@@ -32,8 +30,8 @@ class Files:
 
 
     @staticmethod
-    def CopyFromTo(src:str, dest:str):
-        if not Files.IsPathValid(src) or not Files.IsFileExists(src):
+    def copy_from_to(src:str, dest:str):
+        if not Files.is_path_valid(src) or not Files.is_file_exists(src):
             raise FileNotFoundError(f"Source file not found or invalid: {src}")
 
         # Ensure destination directory exists
@@ -48,44 +46,24 @@ class Files:
             fdest.write(content)
 
     @staticmethod
-    def CopyDomainsFromTo(src:str, dest:str):
-        if Files.IsPathValid(src) == False:
+    def copy_domains_from_to(src:str, dest:str):
+        if Files.is_path_valid(src) == False:
             raise ValueError(f'{src} file path is invalid')
-        if Files.IsPathValid(dest) == False:
+        if Files.is_path_valid(dest) == False:
             raise ValueError(f'{dest} file path is invalid')
 
-        if Files.IsFileExists(src) == False:
+        if Files.is_file_exists(src) == False:
             raise FileNotFoundError()
         with open(src, 'r') as srcFile, open(dest, 'a') as destFile:
             for line in srcFile:
                 destFile.write(f"{Files.ExtractUrlFromLine(line)}\n")
 
-    @staticmethod  
-    def ValidateDirectoryPath(path):
-        from Classes.general import General
-        if Files.IsPathValid(path):
-            if Files.IsDirectory(path):
-                return True
-            General.CreateFolder(path=path)
-            return True
-        return False
-
     @staticmethod
-    def IsDirectory(path):
+    def is_dir(path):
         return os.path.isdir(path)
 
-    @staticmethod            
-    def SaveUniqueListToFile(ls:list, file:str):
-        try:
-            from Classes.general import General
-            uniqueURLs =  General.GetUniqueURLs(urls=ls)
-            Files.SaveListToFile(uniqueURLs, file)
-            return True
-        except (TypeError, ValueError):
-            return False
-
     @staticmethod
-    def IsPathValid(path):
+    def is_path_valid(path):
         try:
             PurePath(path)
             return True
@@ -93,16 +71,16 @@ class Files:
             return False
 
     @staticmethod
-    def SaveTextToFile(txt:str, file:str, mode='a'):
-        if Files.IsPathValid(file) == False:
+    def save_txt_to_file(txt:str, file:str, mode='a'):
+        if Files.is_path_valid(file) == False:
             raise ValueError(f'{file} file path is invalid')
 
         with open(file, mode) as srcFile:
             srcFile.write(f"{txt}\n")
 
     @staticmethod
-    def SaveListToFile(ls:list, file:str):
-        if Files.IsPathValid(file) == False:
+    def save_list_to_file(ls:list, file:str):
+        if Files.is_path_valid(file) == False:
             raise ValueError(f'{file} file path is invalid')
 
         with open(file, 'a') as dest:
@@ -110,41 +88,27 @@ class Files:
                 dest.write(f"{line}\n")
 
     @staticmethod
-    def IsFileExists(path:str):
+    def is_file_exists(path:str):
         return os.path.exists(path) 
 
     @staticmethod
-    def CreateFile(path:str):
+    def create_file(path:str):
         with open(f'{path}', 'w') as f:
             pass
 
     @staticmethod
-    def WriteToFile(path, mode, line:str):
+    def write_to_file(path, mode, line:str):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             f.write(f'{line}\n')
-        Files.RemoveDuplicateFromFile(path)
+        Files.remove_duplicate_from_file(path)
     
     @staticmethod
-    def WriteToFileWithDuplicates(path, mode, line:str):
+    def write_to_file_with_duplicates(path, mode, line:str):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             f.write(f'{line}\n')
 
     @staticmethod
-    def WriteToPortScanningTargetFile():
-        from Classes.globalEnv import GlobalEnv
-        from Classes.general import General
-        with open(GlobalEnv.GetHttpx(), 'r', encoding="utf-8", errors='ignore') as f:
-            for line in f:
-                domain = Files.ExtractUrlFromLine(line)
-                if domain != None:
-                    ip = General.getIPfromDomain(domain)
-                    if ip != None:
-                        print(f'{ip.strip()} -> {domain.strip()}')
-                        Files.WriteToFile(GlobalEnv.GetPortScanningTarget(), 'a', ip)
-                        Files.WriteToFile(GlobalEnv.GetPortScanningTargetDomains(), 'a', domain)  
-
-    @staticmethod
-    def ExtractUrlFromLine(line:str):
+    def extract_url_from_str(line:str):
         match = re.search(
             r"(?:https?://)?(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})", line
         )
@@ -155,19 +119,19 @@ class Files:
             return None
 
     @staticmethod
-    def ExtractUrlsFromFile(filename:str):
+    def extact_urls_from_file(filename:str):
         with open(filename.strip(), encoding="utf-8", errors="ignore") as f:
             urls = re.findall(r'https?://[^\s\[]+', f.read())
         return list(set(urls))
 
     @staticmethod
-    def WriteListToFile(path, mode, lines:list):
+    def write_list_to_file(path, mode, lines:list):
         with open(path, mode, encoding="utf-8", errors='ignore') as f:
             for l in lines:
                 f.write(f'{l}\n')
 
     @staticmethod
-    def RemoveDuplicateFromFile(path):
+    def remove_duplicate_from_file(path):
         try:
             seen = set()
             unique_lines = []

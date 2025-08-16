@@ -19,31 +19,31 @@ class Runner:
         self.__linuxInstaller = LinuxInstaller()
 
     def __prepare(self):
-        Files.WriteToFile(GlobalEnv.GetSubDomainsFile(), 'a', GlobalEnv.GetDomain())
+        Files.write_to_file(GlobalEnv.subdomains_file, 'a', GlobalEnv.domain)
 
     def Execute(self):
         self.__prepare()
 
-        if General.GetOStype() == "Windows":
+        if General.get_os_type() == "Windows":
             self.__windowsInstaller.Execute()
-        elif General.GetOStype() == "Linux":
+        elif General.get_os_type() == "Linux":
             self.__linuxInstaller.Execute()
         
-        if GlobalEnv.GetDoSubdomainEnumeration():
+        if GlobalEnv.do_subdomain_enumeration:
             self.__subdomainEnumeration.Execute()
 
         tasks = []
 
-        if GlobalEnv.GetTakeScreenShots():
+        if GlobalEnv.take_screenshot:
             tasks.append(self.__screenshot.Execute)
-        if GlobalEnv.GetDoPortScanning():
+        if GlobalEnv.do_port_scanning:
             tasks.append(self.__portScanning.Execute)
-        if GlobalEnv.GetDoCrawling():
+        if GlobalEnv.do_crawling:
             tasks.append(self.__crawling.Execute)
-        if GlobalEnv.GetDoFuzzing():
+        if GlobalEnv.do_fuzzing:
             tasks.append(self.__fuzzing.Execute)
         
-        with ThreadPoolExecutor(max_workers=General.GetMaxThreadsNumber()) as executor:
+        with ThreadPoolExecutor(max_workers=General.get_max_number_of_threads()) as executor:
             futures = [executor.submit(task) for task in tasks]
             for future in as_completed(futures):
                 try:

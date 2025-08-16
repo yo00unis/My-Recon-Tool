@@ -81,7 +81,7 @@ class GoToolsInstaller:
         self.__local_bin_path_windows = os.path.expandvars(r'%USERPROFILE%\\go\bin')
     
     def __add_go_tools_to_path(self):
-        if General.GetOStype() == "Windows":
+        if General.get_os_type() == "Windows":
             if not General.is_tool_in_path(self.__local_bin_path_windows):
                 PathClass.add_path_to_user_path_windows(self.__local_bin_path_windows)
         else:
@@ -184,9 +184,9 @@ class GoToolsInstaller:
 
 
     def Execute(self):
-        if General.GetOStype() == "Windows":
+        if General.get_os_type() == "Windows":
             self.__install_go_language_windows()
-        elif General.GetOStype() == "Linux":
+        elif General.get_os_type() == "Linux":
             self.__install_go_language_linux()
             
         self.__install_go_tool("subfinder", "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest")

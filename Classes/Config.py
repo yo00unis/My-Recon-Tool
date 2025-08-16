@@ -28,9 +28,9 @@ class Config:
                 sDir += dirName
             else:
                 sDir += f"/{dirName}"
-            GlobalEnv.SetResultFolder(sDir)
+            GlobalEnv.result_folder = sDir
         else:
-            GlobalEnv.SetResultFolder(dir)
+            GlobalEnv.result_folder = dir
 
 
     @staticmethod
@@ -44,26 +44,26 @@ class Config:
     @staticmethod
     def __set_global_env_folders_files():
         # Create Result Folders
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}")
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}subdomains")
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}portScanning")
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}crawling")
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}fuzzing")
-        Files.CreateFolder(f"{GlobalEnv.GetResultFolder()}subdomains/httpx")
+        Files.create_folder(f"{GlobalEnv.result_folder}")
+        Files.create_folder(f"{GlobalEnv.result_folder}/subdomains")
+        Files.create_folder(f"{GlobalEnv.result_folder}/portScanning")
+        Files.create_folder(f"{GlobalEnv.result_folder}/crawling")
+        Files.create_folder(f"{GlobalEnv.result_folder}/fuzzing")
+        Files.create_folder(f"{GlobalEnv.result_folder}/subdomains/httpx")
         
         # set result folders
-        GlobalEnv.SetSubDomainsFolderPath(f"{GlobalEnv.GetResultFolder()}subdomains")
-        GlobalEnv.SetPortScanningFolderPath(f"{GlobalEnv.GetResultFolder()}portScanning")
-        GlobalEnv.SetCrawlingFolderPath(f"{GlobalEnv.GetResultFolder()}crawling")
-        GlobalEnv.SetFuzzingFolderPath(f"{GlobalEnv.GetResultFolder()}fuzzing")
-        GlobalEnv.SetHttpxPath(f"{GlobalEnv.GetResultFolder()}subdomains/httpx")
-        GlobalEnv.SetLogFile(f"{GlobalEnv.GetResultFolder()}logs.txt")
-        GlobalEnv.SetSubDomainsFile(f"{GlobalEnv.GetResultFolder()}subdomains/subdomains.txt")
-        GlobalEnv.SetDNSPath(f"{GlobalEnv.GetResultFolder()}portScanning/dns.json")
-        GlobalEnv.SetCrtSH(f"{GlobalEnv.GetResultFolder()}subdomains/crtSH.json")
-        GlobalEnv.SetCrtShText(f"{GlobalEnv.GetResultFolder()}subdomains/crtSHtext.txt")
-        GlobalEnv.SetPortScanningARecords(f"{GlobalEnv.GetResultFolder()}portScanning/Arecords.txt")
-        GlobalEnv.SetGowitness(f"{GlobalEnv.GetResultFolder()}screenshots")
+        GlobalEnv.subdomains_folder = f"{GlobalEnv.result_folder}/subdomains"
+        GlobalEnv.port_scanning_folder = f"{GlobalEnv.result_folder}/portScanning"
+        GlobalEnv.crawling_folder = f"{GlobalEnv.result_folder}/crawling"
+        GlobalEnv.fuzzing_folder = f"{GlobalEnv.result_folder}/fuzzing"
+        GlobalEnv.httpx_path = f"{GlobalEnv.result_folder}/subdomains/httpx"
+        GlobalEnv.log_file = f"{GlobalEnv.result_folder}/logs.txt"
+        GlobalEnv.subdomains_file = f"{GlobalEnv.result_folder}/subdomains/subdomains.txt"
+        GlobalEnv.dns_path = f"{GlobalEnv.result_folder}/portScanning/dns_records.json"
+        GlobalEnv.crtsh = f"{GlobalEnv.result_folder}/subdomains/crtSH.json"
+        GlobalEnv.crtsh_txt = f"{GlobalEnv.result_folder}/subdomains/crtSHtext.txt"
+        GlobalEnv.port_scanning_a_records = f"{GlobalEnv.result_folder}/portScanning/a_records.txt"
+        GlobalEnv.gowitness = f"{GlobalEnv.result_folder}/screenshots"
 
     @staticmethod
     def __cli_parser():
@@ -88,15 +88,15 @@ class Config:
     @staticmethod 
     def __set_cli_global_env(args):
         Config.__DealingWithDirectoryConfig(args.result_dir)
-        GlobalEnv.SetDomain(args.domain)
-        GlobalEnv.SetFuffWordlist(args.fuzz_wordlist)
-        GlobalEnv.SetDoSubdomainEnumeration(args.subdomain_enumeration)
-        GlobalEnv.SetTakeScreenShots(args.screenshots)
-        GlobalEnv.SetPorts(args.ports)
-        GlobalEnv.SetDoPortScanning(args.port_scan)
-        GlobalEnv.SetDoCrawling(args.crawling)
-        GlobalEnv.SetDoFuzzing(args.fuzzing)
-        GlobalEnv.SetMaxThreads(args.threads)
+        GlobalEnv.domain = args.domain
+        GlobalEnv.ffuf_wordlist = args.fuzz_wordlist
+        GlobalEnv.do_subdomain_enumeration = args.subdomain_enumeration
+        GlobalEnv.take_screenshot = args.screenshots
+        GlobalEnv.ports = args.ports
+        GlobalEnv.do_port_scanning = args.port_scan
+        GlobalEnv.do_crawling = args.crawling
+        GlobalEnv.do_fuzzing = args.fuzzing
+        GlobalEnv.max_threads = args.threads
 
     @staticmethod
     def LoadConfig():

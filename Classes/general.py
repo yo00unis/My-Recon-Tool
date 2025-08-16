@@ -1,19 +1,14 @@
 import io
 import json
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
 import socket
-import subprocess
 import sys
-from threading import Lock
 from urllib.parse import urlparse
-import concurrent.futures
 from Classes.files import Files
 from Classes.globalEnv import GlobalEnv
-from Classes.request import Requests
 
 
 class General:
@@ -26,7 +21,7 @@ class General:
     __statusPattern = re.compile(r"\b([23]\d{2}|401|403)\b")
 
     @staticmethod
-    def getIPfromDomain(domain):
+    def get_ip_from_domain(domain):
         try:
             ip = socket.gethostbyname(domain.strip())
             return ip
@@ -35,78 +30,23 @@ class General:
             return None
 
     @staticmethod
-    def IsDomainValid(domain):
+    def is_domain_valid(domain):
         return bool(re.fullmatch(General.__domainPattern, domain))
 
-    @staticmethod
-    def GetUniqueURLs(urls):
-        return list(set(urls))
 
     @staticmethod
-    def ReadResultDirectory():
-        while True:
-            fpath = input('Enter valid directory to save result: ')
-            if Files.ValidateDirectoryPath(fpath):
-                GlobalEnv.SetResultFolder(General.GetStrippedString(fpath))
-                return True
-
-            if General.GetOStype() == 'Windows':
-                os.system('cls')
-            else:
-                os.system('clear')
-
-            print('invalid path!')
-
-    @staticmethod
-    def ReadDomain():
-        while True:
-            domain = input('Enter valid domain: ')
-            if General.IsDomainValid(General.GetStrippedString(domain)):
-                GlobalEnv.SetDomain(domain)
-                return True
-
-            if General.GetOStype() == 'Windows':
-                os.system('cls')
-            else:
-                os.system('clear')
-
-            print('invalid domain!')
-
-    @staticmethod
-    def ReadFFUFwordlist():
-        ffufWordlist = input('Enter ffuf wordlist: ')
-        GlobalEnv.SetFuffWordlist(str(ffufWordlist))
-        return True
-
-    @staticmethod
-    def GetOStype():
+    def get_os_type():
         return platform.system()
 
     @staticmethod
-    def GetStrippedString(s:str):
-        return s.strip()
-
-    @staticmethod
-    def ExecuteCommand(cmd:str, outputFile:str='', tmpfile:str=''):
-        if outputFile == '':
-            return
-        subprocess.run(cmd, shell=True, check=True)
-        if tmpfile == '':
-            tmpfile = GlobalEnv.GetTempFile()   
-        Files.CopyFromTo(tmpfile, outputFile)
-        Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
-        if 'json' in outputFile:
-            General.reformat_json_in_file(outputFile, outputFile)
-
-    @staticmethod
-    def ExecuteCommandNotmp(cmd:str, outputFile:str=''):
+    def exexute_command(cmd:str, outputFile:str=''):
         print(f"[+] Running Command: {cmd}")
         os.system(cmd)
         if outputFile != '':
-            Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
+            Files.copy_from_to(outputFile, GlobalEnv.log_file)
 
     @staticmethod
-    def GetUrlFromDomain(domain:str):
+    def get_url_from_domain(domain:str):
         # Add 'https://' if missing to ensure urlparse works correctly
         if not domain.startswith(('http://', 'https://')):
             domain = 'https://' + domain
@@ -121,7 +61,7 @@ class General:
         return domain
 
     @staticmethod
-    def ExtractDomainsFromJsonFile(file_path):
+    def extract_domains_from_json(file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
 
@@ -143,7 +83,7 @@ class General:
         return results
 
     @staticmethod
-    def ExtractDomainsFromTextFile(file_path):
+    def extract_domains_from_txt(file_path):
         with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
 
@@ -159,30 +99,19 @@ class General:
         return results
 
     @staticmethod
-    def RemoveOutOfScopeFromSubdomains(path):
+    def remove_out_of_scope_subdomains(path):
         seen = set()
         unique_lines = []
 
         with open(path, 'r') as infile:
             for line in infile:
-                if line not in seen and GlobalEnv.GetDomain() in line:
+                if line not in seen and GlobalEnv.domain in line:
                     seen.add(line)
                     unique_lines.append(line)
 
         with open(path, 'w') as outfile:
             outfile.writelines(unique_lines)
 
-    @staticmethod
-    def commandsExecuter(func, path:str, toolname:str, ext:str="txt", tmpfile:str=""):
-        i = 1
-        commands = func
-        for c in commands:
-            outFile = f"{path}/{toolname}{i}.{ext}"
-            if not Files.IsFileExists(outFile):
-                Files.CreateFile(outFile)
-            General.ExecuteCommand(c, outFile, tmpfile=tmpfile)
-            i = i + 1
-    
     @staticmethod
     def is_tool_installed(toolname:str):
         return shutil.which(toolname) is not None
@@ -227,12 +156,9 @@ class General:
             f_out.write("\n]")
     
     @staticmethod
-    def GetMaxThreadsNumber():
+    def get_max_number_of_threads():
         try:
-            threads = int(GlobalEnv.GetMaxThreads()) 
-            if threads > 15:
-                return 15
-            return threads
+            return int(GlobalEnv.max_threads) 
         except:
             return 10
     
