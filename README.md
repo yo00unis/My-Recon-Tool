@@ -1,7 +1,7 @@
 # 🕵️ Recon Automation Tool
 
 A powerful reconnaissance toolkit for:\
-✅ Subdotool Enumeration\
+✅ Subdomain Enumeration\
 ✅ Live Host Detection\
 ✅ Port Scanning\
 ✅ Web Crawling\
@@ -13,10 +13,10 @@ A powerful reconnaissance toolkit for:\
 
 | Tool          | Type                  | Description                                  | Link                                                    |
 | ------------- | --------------------- | -------------------------------------------- | ------------------------------------------------------- |
-| `subfinder`   | Subdotool Enumeration | Fast passive subdotool discovery             | [GitHub](https://github.com/projectdiscovery/subfinder) |
-| `sublist3r`   | Subdotool Enumeration | OSINT-based subdotool enumeration            | [GitHub](https://github.com/aboul3la/Sublist3r)         |
-| `assetfinder` | Subdotool Enumeration | Find related dotools/subdotools              | [GitHub](https://github.com/tomnomnom/assetfinder)      |
-| `crt.sh`      | Subdotool Enumeration | Certificate Transparency log search          | [Website](https://crt.sh/)                              |
+| `subfinder`   | Subdomain Enumeration | Fast passive subdomain discovery             | [GitHub](https://github.com/projectdiscovery/subfinder) |
+| `sublist3r`   | Subdomain Enumeration | OSINT-based subdomain enumeration            | [GitHub](https://github.com/aboul3la/Sublist3r)         |
+| `assetfinder` | Subdomain Enumeration | Find related domains/subdomains              | [GitHub](https://github.com/tomnomnom/assetfinder)      |
+| `crt.sh`      | Subdomain Enumeration | Certificate Transparency log search          | [Website](https://crt.sh/)                              |
 | `httpx`       | Live Host Detection   | Fast HTTP/HTTPS host verification            | [GitHub](https://github.com/projectdiscovery/httpx)     |
 | `gowitness`   | Screenshots           | Capture screenshots of live hosts            | [GitHub](https://github.com/sensepost/gowitness)        |
 | `nmap`        | Port Scanning         | Comprehensive network scanner                | [Official](https://nmap.org/)                           |
@@ -45,7 +45,7 @@ python tool.py -d example.com
 | -------------------------------- | ---------------------------------------------------------------- |
 | `-d`, `--domain`                 | Target domain (required)                                         |
 | `-rd`, `--result-dir`            | Directory to save results (default: `ReconResult`)               |
-| `-se`, `--subdotool-enumeration` | Enable subdotool enumeration                                     |
+| `-se`, `--subdomain-enumeration` | Enable subdomain enumeration                                     |
 | `-sh`, `--screenshots`           | Take screenshots of live hosts                                   |
 | `-ps`, `--port-scan`             | Enable port scanning                                             |
 | `-p`, `--ports`                  | Ports to scan (comma-separated, default: `443,80`)               |
