@@ -24,7 +24,6 @@ class General:
     __domainPattern = r"\b(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b"
     __urlPattern = r'https?://[^\s"\'<>]+'
     __statusPattern = re.compile(r"\b([23]\d{2}|401|403)\b")
-    __write_lock = Lock()
 
     @staticmethod
     def getIPfromDomain(domain):
@@ -107,12 +106,12 @@ class General:
             Files.CopyFromTo(outputFile, GlobalEnv.GetLogFile())
 
     @staticmethod
-    def GetUrlFromDomain(url):
+    def GetUrlFromDomain(domain:str):
         # Add 'https://' if missing to ensure urlparse works correctly
-        if not url.startswith(('http://', 'https://')):
-            url = 'https://' + url
+        if not domain.startswith(('http://', 'https://')):
+            domain = 'https://' + domain
 
-        parsed_url = urlparse(url)
+        parsed_url = urlparse(domain)
         domain = parsed_url.netloc
 
         # Remove 'www.' if present
@@ -174,62 +173,6 @@ class General:
             outfile.writelines(unique_lines)
 
     @staticmethod
-    def RemoveOutOfScopeFromListOfSubdomains(urls:list):
-        inscopeurls = []
-        for url in urls:
-            s = (((str(url)).strip()).split('.com'))[0]
-            if GlobalEnv.GetDomain() in s:
-                inscopeurls.append(s)
-        return inscopeurls
-        
-
-    ### filter result files like subdomains file and waybackurls file from dublicate and bad urls
-
-    @staticmethod
-    def __process_url(url):
-        response = Requests.Get(url)
-        if General.__statusPattern.search(str(response.status_code)) and (str(url)).startswith('https'):
-            with General.__write_lock:
-                Files.WriteToFile(GlobalEnv.GetTempFile(), "a", url)
-
-    @staticmethod
-    def FilterResultFile(filename:str):
-
-        Files.WriteToFile(GlobalEnv.GetTempFile(), 'w', '')
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = []
-            with open(filename, 'r') as f:
-                for line in f:
-                    url = General.GetUrlFromDomain(line.strip())
-                    if url:
-                        futures.append(executor.submit(General.__process_url, url))
-
-        concurrent.futures.wait(futures)
-
-        Files.WriteToFile(filename, "w", "")
-        Files.CopyFromTo(GlobalEnv.GetTempFile(), filename)
-        Files.WriteToFile(GlobalEnv.GetTempFile(), "w", "")
-        Files.CopyFromTo(filename, GlobalEnv.GetLogFile())
-        Files.RemoveDuplicateFromFile(filename)
-
-    # get httpx domains
-    @staticmethod
-    def GetDomainsFromHttpxFile():
-        from globalEnv import GlobalEnv
-        from general import General
-
-        domains = []
-        with open(GlobalEnv.GetHttpx(), "r", encoding="utf-8", errors="ignore") as f:
-            for line in f:
-                strippedLine = line.strip()
-                if '[' in strippedLine:
-                    url = (strippedLine.split('['))[0]
-                domain = General.GetUrlFromDomain(url.strip())
-                domains.append(domain)
-        return sorted(set(domains))
-
-    @staticmethod
     def commandsExecuter(func, path:str, toolname:str, ext:str="txt", tmpfile:str=""):
         i = 1
         commands = func
@@ -243,9 +186,6 @@ class General:
     @staticmethod
     def is_tool_installed(toolname:str):
         return shutil.which(toolname) is not None
-        # if subprocess.run(["which", f"{toolname}"], capture_output=True).returncode == 0:
-        #     return True
-        # return False
     
     @staticmethod
     def is_tool_in_path(self, path_to_check: str):
@@ -255,56 +195,36 @@ class General:
     @staticmethod
     def reformat_json_in_file(input_file:str, output_file:str):
         General.fix_json_file(input_file, output_file)
-        # Load JSON data from file
-        with open(input_file, "r") as f:
-            data = json.load(f)  # Parse JSON
 
-        # Write reformatted JSON (indented, sorted keys)
-        with open(output_file, "w") as f:
-            json.dump(data, f, indent=4, sort_keys=True)  # Pretty-print
+        with open(input_file, "r", encoding="utf-8") as f_in, open(output_file, "w", encoding="utf-8") as f_out:
+            f_out.write("[\n")
+            first = True
+            for line in f_in:
+                line = line.strip()
+                if not line:
+                    continue
+                obj = json.loads(line)  # Parse كل سطر على حدة
+                if not first:
+                    f_out.write(",\n")
+                f_out.write(json.dumps(obj, indent=4, sort_keys=True, ensure_ascii=False))
+                first = False
+            f_out.write("\n]")
     
     @staticmethod
     def fix_json_file(input_file:str, output_file:str):
-        try:
-            content = Path(input_file).read_text(encoding='utf-8').strip()
-            
-            if content.startswith('[') and content.endswith(']'):
-                content = content[1:-1]
-            
-            objects = []
-            buffer = ""
-            brace_count = 0
-            
-            for char in content:
-                if char == '{':
-                    brace_count += 1
-                    buffer += char
-                elif char == '}':
-                    brace_count -= 1
-                    buffer += char
-                    if brace_count == 0:
-                        objects.append(buffer)
-                        buffer = ""
-                elif brace_count > 0:
-                    buffer += char
-            
-            valid_objects = []
-            for obj in objects:
-                try:
-                    valid_objects.append(json.loads(obj))
-                except json.JSONDecodeError:
+        with open(input_file, "r", encoding="utf-8") as f_in, open(output_file, "w", encoding="utf-8") as f_out:
+            f_out.write("[\n")
+            first = True
+            for line in f_in:
+                line = line.strip()
+                if not line:
                     continue
-            
-            Path(output_file).write_text(
-                json.dumps(valid_objects, indent=4, ensure_ascii=False),
-                encoding='utf-8'
-            )
-            
-            return True
-        
-        except Exception as e:
-            print(f"Error fixing JSON file: {str(e)}")
-            return False
+                obj = json.loads(line)
+                if not first:
+                    f_out.write(",\n")
+                f_out.write(json.dumps(obj, ensure_ascii=False))
+                first = False
+            f_out.write("\n]")
     
     @staticmethod
     def GetMaxThreadsNumber():

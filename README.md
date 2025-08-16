@@ -1,112 +1,86 @@
 # 🕵️ Recon Automation Tool
 
-A powerful reconnaissance toolkit for:  
-✅ Subdomain Enumeration  
-✅ Live Host Detection  
-✅ Port Scanning  
-✅ Web Crawling  
-✅ Directory Fuzzing  
+A powerful reconnaissance toolkit for:\
+✅ Subdotool Enumeration\
+✅ Live Host Detection\
+✅ Port Scanning\
+✅ Web Crawling\
+✅ Directory Fuzzing
 
 ---
 
-## 🔧 Tools Used
+## 🔧 Tools Overview
 
-### 1. **Subdomain Enumeration**
-- [`crt.sh`](https://crt.sh/) - Certificate Transparency log search (via browser or API) 
-- [`subfinder`](https://github.com/projectdiscovery/subfinder) - Fast passive subdomain discovery  
-- [`sublist3r`](https://github.com/aboul3la/Sublist3r) - OSINT-based subdomain enumeration  
-- [`assetfinder`](https://github.com/tomnomnom/assetfinder) - Find domains/subdomains related to a target  
-- [`amass`](https://github.com/OWASP/Amass) - In-depth DNS mapping and network topology   
-- [`Chaos`](https://github.com/projectdiscovery/chaos-client) - Official API for Project Discovery's Chaos dataset 
-
-### 2. **Live Host Detection**
-- [`httpx`](https://github.com/projectdiscovery/httpx) - Fast HTTP/HTTPS host verification  
-
-### 3. **Port Scanning**
-- [`nmap`](https://nmap.org/) - Comprehensive network scanning  
-- [`masscan`](https://github.com/robertdavidgraham/masscan) - Ultra-fast port scanner  
-
-### 4. **Web Crawling**
-- [`katana`](https://github.com/projectdiscovery/katana) - Advanced crawling/spidering  
-- [`gau`](https://github.com/lc/gau) - Fetch known URLs from AlienVault/CommonCrawl  
-- [`gospider`](https://github.com/jaeles-project/gospider) - Fast web crawler  
-- [`waybackurls`](https://github.com/tomnomnom/waybackurls) - Extract archived URLs  
-
-### 5. **Fuzzing**
-- [`ffuf`](https://github.com/ffuf/ffuf) - Bruteforce directories/parameters/VHosts  
+| Tool          | Type                  | Description                                  | Link                                                    |
+| ------------- | --------------------- | -------------------------------------------- | ------------------------------------------------------- |
+| `subfinder`   | Subdotool Enumeration | Fast passive subdotool discovery             | [GitHub](https://github.com/projectdiscovery/subfinder) |
+| `sublist3r`   | Subdotool Enumeration | OSINT-based subdotool enumeration            | [GitHub](https://github.com/aboul3la/Sublist3r)         |
+| `assetfinder` | Subdotool Enumeration | Find related dotools/subdotools              | [GitHub](https://github.com/tomnomnom/assetfinder)      |
+| `crt.sh`      | Subdotool Enumeration | Certificate Transparency log search          | [Website](https://crt.sh/)                              |
+| `httpx`       | Live Host Detection   | Fast HTTP/HTTPS host verification            | [GitHub](https://github.com/projectdiscovery/httpx)     |
+| `gowitness`   | Screenshots           | Capture screenshots of live hosts            | [GitHub](https://github.com/sensepost/gowitness)        |
+| `nmap`        | Port Scanning         | Comprehensive network scanner                | [Official](https://nmap.org/)                           |
+| `naabu`       | Port Scanning         | Fast port scanning tool                      | [GitHub](https://github.com/projectdiscovery/naabu)     |
+| `katana`      | Web Crawling          | Advanced crawling/spidering                  | [GitHub](https://github.com/projectdiscovery/katana)    |
+| `gau`         | Web Crawling          | Fetch known URLs from CommonCrawl/AlienVault | [GitHub](https://github.com/lc/gau)                     |
+| `gospider`    | Web Crawling          | Fast web crawler                             | [GitHub](https://github.com/jaeles-project/gospider)    |
+| `waybackurls` | Web Crawling          | Extract archived URLs                        | [GitHub](https://github.com/tomnomnom/waybackurls)      |
+| `ffuf`        | Fuzzing               | Bruteforce directories/parameters/VHosts     | [GitHub](https://github.com/ffuf/ffuf)                  |
 
 ---
-## 🛠️ Installation
 
-### **1. Prerequisite Tools**
-Install these dependencies first:
+## 🏃 Running the Tool (CLI)
+
+The tool is fully **CLI-driven**.
+
+### **Basic Usage**
 
 ```bash
-# Subdomain Enumeration
-go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-go install github.com/OWASP/Amass/v3/cmd/amass@latest
-pip install Sublist3r
-go install github.com/tomnomnom/assetfinder@latest
-go install github.com/projectdiscovery/chaos-client/cmd/chaos@latest
+python tool.py -d example.com
+```
 
-# Live Hosts
-go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+### **Common Options**
 
-# Port Scanning
-#### **Nmap Installation**
-- **Linux Users**: 
-sudo apt install nmap masscan 
-- **Windows Users**:  
-  📥 [Download Nmap for Windows](https://nmap.org/download.html) (Official installer)  
-  ```powershell
-  # After installation, add to PATH:
-  [Environment]::SetEnvironmentVariable("PATH", "$env:PATH;C:\Program Files (x86)\Nmap", "User")
+| Flag                             | Description                                                      |
+| -------------------------------- | ---------------------------------------------------------------- |
+| `-d`, `--domain`                 | Target domain (required)                                         |
+| `-rd`, `--result-dir`            | Directory to save results (default: `ReconResult`)               |
+| `-se`, `--subdotool-enumeration` | Enable subdotool enumeration                                     |
+| `-sh`, `--screenshots`           | Take screenshots of live hosts                                   |
+| `-ps`, `--port-scan`             | Enable port scanning                                             |
+| `-p`, `--ports`                  | Ports to scan (comma-separated, default: `443,80`)               |
+| `-c`, `--crawling`               | Enable web crawling                                              |
+| `-f`, `--fuzzing`                | Enable directory fuzzing                                         |
+| `-fw`, `--fuzz-wordlist`         | Fuzzing wordlist file (default: `directory-list-2.3-medium.txt`) |
+| `-t`, `--threads`                | Max number of threads (default: 15)                              |
 
-## 🚀 Masscan Installation
-
-### **Linux/macOS (Recommended)**
-```bash
-# Install dependencies (Debian/Ubuntu)
-sudo apt update && sudo apt install -y git make gcc
-
-# Clone and compile
-git clone https://github.com/robertdavidgraham/masscan.git
-cd masscan
-make -j
-
-# Install system-wide
-sudo cp bin/masscan /usr/local/bin/
-
-# Crawling
-go install github.com/projectdiscovery/katana/cmd/katana@latest
-go install github.com/lc/gau/v2/cmd/gau@latest
-go install github.com/jaeles-project/gospider@latest
-go install github.com/tomnomnom/waybackurls@latest
-
-# Fuzzing
-go install github.com/ffuf/ffuf@latest
 ---
-## 🐍 Python Environment Setup
 
-### **1. Create Virtual Environment**
+### **Examples**
+
+1. **Subdomain enumeration + crawling**
+
 ```bash
-# Linux/macOS
-python3 -m venv .venv
-source .venv/bin/activate  # Activate
+python tool.py -d hackerone.com -se -c
+```
 
-# Windows (PowerShell)
-python -m venv .venv
-.\.venv\Scripts\activate
+2. **Port scanning specific ports + fuzzing**
 
-pip install -r requirements.txt
-
-### 🏃 Running the Tool
-
-### **Windows**
-```cmd
-cd src
-python .\main.py
-### **Linux/macOS**
 ```bash
-# Navigate to source and run with python3
-cd src/ && python3 main.py
+python tool.py -d example.com -ps -p 80,443 -f -fw my_wordlist.txt
+```
+
+3. **Full scan with 20 threads**
+
+```bash
+python tool.py -d example.com -se -sh -ps -c -f -t 20
+```
+
+---
+
+### ✅ Notes
+
+- All results are saved in the specified `--result-dir` folder (default: `ReconResult`).
+- Boolean flags (`-se`, `-sh`, `-ps`, `-c`, `-f`) are optional. Include the flag to enable, omit to disable.
+- The tool will automatically create the necessary folders and files inside the result directory.
+

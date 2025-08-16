@@ -20,19 +20,15 @@ class GlobalEnv:
     __doFuzzing = True
     __TakeScreenShots = True
     __ports = f""
-    __portScanningTarget = f""
-    __portScanningTargetDomains = f""
-    __tempFile = f""
-    __tempJson = f""
-    __dnsRecords = f""
+    __portScanningARecords = f""
     __gowitness = ""
     __httpx_path = ""
     __dns_path = ""
-    __max_threads = ""
+    __max_threads = 0
 
     @staticmethod
-    def SetMaxThreads(rf:str):
-        GlobalEnv.__max_threads = rf.strip()
+    def SetMaxThreads(threads:int):
+        GlobalEnv.__max_threads = threads
 
     @staticmethod
     def GetMaxThreads():
@@ -63,14 +59,6 @@ class GlobalEnv:
     def GetGowitness():
         return GlobalEnv.__gowitness
 
-    @staticmethod
-    def SetDnsRecords(rf:str):
-        GlobalEnv.__dnsRecords = rf.strip()
-
-    @staticmethod
-    def GetDnsRecords():
-        return GlobalEnv.__dnsRecords
-
     # subdomain enumeration tools
     @staticmethod
     def SetCrtSH(rf:str):
@@ -97,23 +85,6 @@ class GlobalEnv:
     def GetLogFile():
         return GlobalEnv.__LogFile
 
-    # temp files
-    @staticmethod
-    def SetTempFile(d:str):
-        GlobalEnv.__tempFile = d.strip()
-
-    @staticmethod
-    def GetTempFile():
-        return GlobalEnv.__tempFile
-
-    @staticmethod
-    def SetTempJson(d:str):
-        GlobalEnv.__tempJson = d.strip()
-
-    @staticmethod
-    def GetTempJson():
-        return GlobalEnv.__tempJson
-
     # config
     @staticmethod
     def SetResultFolder(rf):
@@ -134,20 +105,12 @@ class GlobalEnv:
         return GlobalEnv.__Domain
 
     @staticmethod
-    def SetPortScanningTargetDomains(d:str):
-        GlobalEnv.__portScanningTargetDomains = d.strip()
+    def SetPortScanningARecords(rf:str):
+        GlobalEnv.__portScanningARecords = rf.strip()
 
     @staticmethod
-    def GetPortScanningTargetDomains():
-        return GlobalEnv.__portScanningTargetDomains
-
-    @staticmethod
-    def SetPortScanningTarget(rf:str):
-        GlobalEnv.__portScanningTarget = rf.strip()
-
-    @staticmethod
-    def GetPortScanningTarget():
-        return GlobalEnv.__portScanningTarget
+    def GetPortScanningARecords():
+        return GlobalEnv.__portScanningARecords
 
     @staticmethod
     def SetPorts(rf:str):
@@ -158,66 +121,51 @@ class GlobalEnv:
         return GlobalEnv.__ports
 
     @staticmethod
-    def SetDoSubdomainEnumeration(rf:str):
-        if rf.strip() == "1":
-            GlobalEnv.__DoSubdomainEnumeration = True
-        else:
-            GlobalEnv.__DoSubdomainEnumeration = False
+    def SetDoSubdomainEnumeration(flag:bool):
+        GlobalEnv.__DoSubdomainEnumeration = flag
 
     @staticmethod
     def GetDoSubdomainEnumeration():
         return GlobalEnv.__DoSubdomainEnumeration
 
     @staticmethod
-    def SetDoPortScanning(rf:str):
-        if rf.strip() == "0":
-            GlobalEnv.__doPortScanning = False
-        else:
-            GlobalEnv.__doPortScanning = True
+    def SetDoPortScanning(flag:bool):
+        GlobalEnv.__doPortScanning = flag
 
     @staticmethod
     def GetDoPortScanning():
         return GlobalEnv.__doPortScanning
 
     @staticmethod
-    def SetDoCrawling(rf:str):
-        if rf.strip() == "0":
-            GlobalEnv.__doCrawling = False
-        else:
-            GlobalEnv.__doCrawling = True
+    def SetDoCrawling(flag:bool):
+        GlobalEnv.__doCrawling = flag
 
     @staticmethod
     def GetDoCrawling():
         return GlobalEnv.__doCrawling
 
     @staticmethod
-    def SetDoFuzzing(rf:str):
-        if rf.strip() == "0":
-            GlobalEnv.__doFuzzing = False
-        else:
-            GlobalEnv.__doFuzzing = True
+    def SetDoFuzzing(flag:bool):
+        GlobalEnv.__doFuzzing = flag
 
     @staticmethod
     def GetDoFuzzing():
         return GlobalEnv.__doFuzzing
 
     @staticmethod
-    def SetTakeScreenShots(rf:str):
-        if rf.strip() == "0":
-            GlobalEnv.__TakeScreenShots = False
-        else:
-            GlobalEnv.__TakeScreenShots = True
+    def SetTakeScreenShots(flag:bool):
+        GlobalEnv.__TakeScreenShots = flag
 
     @staticmethod
     def GetTakeScreenShots():
         return GlobalEnv.__TakeScreenShots
 
     @staticmethod
-    def SetSubDomainsPath(rf:str):
+    def SetSubDomainsFile(rf:str):
         GlobalEnv.__SubDomainsFile = rf.strip()
 
     @staticmethod
-    def GetSubDomainsPath():
+    def GetSubDomainsFile():
         return GlobalEnv.__SubDomainsFile
     
     # Set result folders

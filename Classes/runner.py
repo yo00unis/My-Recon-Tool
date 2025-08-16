@@ -19,7 +19,7 @@ class Runner:
         self.__linuxInstaller = LinuxInstaller()
 
     def __prepare(self):
-        Files.WriteToFile(GlobalEnv.GetSubDomainsPath(), 'a', GlobalEnv.GetDomain())
+        Files.WriteToFile(GlobalEnv.GetSubDomainsFile(), 'a', GlobalEnv.GetDomain())
 
     def Execute(self):
         self.__prepare()
