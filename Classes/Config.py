@@ -65,6 +65,8 @@ class Config:
         GlobalEnv.port_scanning_a_records = f"{GlobalEnv.result_folder}/portScanning/a_records.txt"
         GlobalEnv.gowitness = f"{GlobalEnv.result_folder}/screenshots"
 
+        GlobalEnv.user_agents_file = f"Files/user-agents.txt"
+
     @staticmethod
     def __cli_parser():
         parser = argparse.ArgumentParser(description="Recon Tool CLI")

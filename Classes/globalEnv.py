@@ -22,5 +22,6 @@ class GlobalEnv:
     httpx_path = ""
     dns_path = ""
     max_threads = 0
+    user_agents_file = ""
 
     

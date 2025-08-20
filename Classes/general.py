@@ -176,7 +176,7 @@ class General:
 
     @staticmethod
     def __get_user_agents():
-        with open('Files/user-agents.txt', 'r', encoding="utf-8", errors='ignore') as f:
+        with open(f'{GlobalEnv.user_agents_file}', 'r', encoding="utf-8", errors='ignore') as f:
             agents = [line.strip() for line in f if line.strip()]
         return agents
 

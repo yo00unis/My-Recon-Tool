@@ -327,27 +327,27 @@ class Fuzzing:
             url += '/FUZZ'
         
         url = url.strip()
-        ua = General.get_random_user_agent()
         cookie = General.get_random_cookie()
+        ua = General.get_random_user_agent()
 
         return f'''ffuf -u {url} \
-                    -w {GlobalEnv.ffuf_wordlist} \
-                    -p 2 \
-                    -r \
-                    -rate 15 \
-                    -timeout 10 \
-                    -t 1 \
-                    -H "User-Agent: {ua}" \
-                    -H "Cookie: {cookie}" \
-                    -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-                    -H "Accept-Language: en-US,en;q=0.5" \
-                    -H "Connection: keep-alive" \
-                    -H "Upgrade-Insecure-Requests: 1" \
-                    -recursion \
-                    -recursion-depth 2 \
-                    -fs 0 \
-                    -o {GlobalEnv.fuzzing_folder}/ffuf_{domain}_{timestamp}.json \
-                    -of json'''
+                -w {GlobalEnv.ffuf_wordlist} \
+                -p 2 \
+                -r \
+                -rate 15 \
+                -timeout 10 \
+                -t 1 \
+                -H "User-Agent: {ua}" \
+                -H "Cookie: {cookie}" \
+                -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+                -H "Accept-Language: en-US,en;q=0.5" \
+                -H "Connection: keep-alive" \
+                -H "Upgrade-Insecure-Requests: 1" \
+                -recursion \
+                -recursion-depth 2 \
+                -fs 0 \
+                -o {GlobalEnv.fuzzing_folder}/ffuf_{domain}_{timestamp}.json \
+                -of json'''
         
 
     def __commands(self, url):
