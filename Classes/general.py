@@ -2,9 +2,11 @@ import io
 import json
 import os
 import platform
+import random
 import re
 import shutil
 import socket
+import string
 import sys
 from urllib.parse import urlparse
 from Classes.files import Files
@@ -15,6 +17,7 @@ class General:
     def __init__(self):
         pass
 
+    __agents_cache = []
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     __domainPattern = r"\b(?:[a-z0-9](?:[a-z0-9\-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b"
     __urlPattern = r'https?://[^\s"\'<>]+'
@@ -170,3 +173,23 @@ class General:
         except:
             return False
 
+
+    @staticmethod
+    def __get_user_agents():
+        with open('Files/user-agents.txt', 'r', encoding="utf-8", errors='ignore') as f:
+            agents = [line.strip() for line in f if line.strip()]
+        return agents
+
+    @staticmethod
+    def get_random_user_agent():
+        if not General.__agents_cache:
+            General.__agents_cache = General.__get_user_agents()
+        
+        agent = General.__agents_cache.pop(0)
+        return agent 
+    
+    @staticmethod
+    def get_random_cookie():
+        key = ''.join(random.choices(string.ascii_letters, k=8))
+        value = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+        return f"{key}={value}"

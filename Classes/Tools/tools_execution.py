@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import json
 import os
 import threading
@@ -315,31 +316,38 @@ class Fuzzing:
     def __init__(self):
         self.__threads = General.get_max_number_of_threads()
     
-    def __FFUFCommand(self, url:str):  
+    def __FFUFCommand(self, url:str): 
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        domain = url.replace('.', '_').replace(':', '_').replace('/', '_')
+
         if url.endswith('/'):
             url += 'FUZZ'
         else:
             url += '/FUZZ'
         
         url = url.strip()
+        ua = General.get_random_user_agent()
+        cookie = General.get_random_cookie()
 
         return f'''ffuf -u {url} \
-                -w {GlobalEnv.ffuf_wordlist} \
-                -p 2 \
-                -r \
-                -rate 15 \
-                -timeout 10 \
-                -t 1 \
-                -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" \
-                -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-                -H "Accept-Language: en-US,en;q=0.5" \
-                -H "Connection: keep-alive" \
-                -H "Upgrade-Insecure-Requests: 1" \
-                -recursion \
-                -recursion-depth 2 \
-                -fs 0 \
-                -o {GlobalEnv.fuzzing_folder}/ffuf.json \
-                -of json'''
+                    -w {GlobalEnv.ffuf_wordlist} \
+                    -p 2 \
+                    -r \
+                    -rate 15 \
+                    -timeout 10 \
+                    -t 1 \
+                    -H "User-Agent: {ua}" \
+                    -H "Cookie: {cookie}" \
+                    -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+                    -H "Accept-Language: en-US,en;q=0.5" \
+                    -H "Connection: keep-alive" \
+                    -H "Upgrade-Insecure-Requests: 1" \
+                    -recursion \
+                    -recursion-depth 2 \
+                    -fs 0 \
+                    -o {GlobalEnv.fuzzing_folder}/ffuf_{domain}_{timestamp}.json \
+                    -of json'''
         
 
     def __commands(self, url):
