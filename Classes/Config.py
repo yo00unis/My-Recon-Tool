@@ -76,7 +76,7 @@ class Config:
         parser.add_argument("-p", "--ports", default="443,80", help="Ports to scan (comma separated)")
         parser.add_argument("-c", "--crawling", action="store_true", help="Do crawling")
         parser.add_argument("-f", "--fuzzing", action="store_true", help="Do fuzzing")
-        parser.add_argument("-fw", "--fuzz-wordlist", default="directory-list-2.3-medium.txt", help="Fuzzing wordlist file")
+        parser.add_argument("-fw", "--fuzz-wordlist", default="dicc.txt", help="Fuzzing wordlist file")
         parser.add_argument("-t", "--threads", type=int, default=15, help="Max number of threads")
         args = parser.parse_args()
         if not args.domain:

@@ -186,25 +186,12 @@ class PortScanning:
     def __init__(self):
         self.__threads = General.get_max_number_of_threads()
 
-    __record_types = [
-        "A",
-        "AAAA",
-        "CNAME",
-        "MX",
-        "NS",
-        "TXT",
-        "SOA",
-        "PTR",
-        "SRV",
-        "CAA",
-        "NAPTR",
-        "DNSKEY",
-        "RRSIG",
-        "DS",
-        "HINFO",
-        "SPF",
-        "TLSA",
-    ]
+    __record_types = ['A', 'AAAA', 'AFSDB', 'APL', 'CAA', 'CDNSKEY', 'CDS', 'CERT',
+            'CNAME', 'CSYNC', 'DHCID', 'DLV', 'DNAME', 'DNSKEY', 'DS', 'EUI48',
+            'EUI64', 'HINFO', 'HIP', 'HTTPS', 'IPSECKEY', 'KEY', 'KX', 'LOC',
+            'MX', 'NAPTR', 'NS', 'NSEC', 'NSEC3', 'NSEC3PARAM', 'OPENPGPKEY', 'PTR',
+            'RP', 'RRSIG', 'SIG', 'SMIMEA', 'SOA', 'SRV', 'SSHFP', 'SVCB',
+            'TA', 'TKEY', 'TLSA', 'TSIG', 'TXT', 'URI', 'ZONEMD']
 
     def __NmapCommand(self):    
         ports = GlobalEnv.ports
@@ -333,8 +320,26 @@ class Fuzzing:
             url += 'FUZZ'
         else:
             url += '/FUZZ'
+        
+        url = url.strip()
 
-        return f'ffuf -u {url} -p 2 -r -w {GlobalEnv.ffuf_wordlist} -rate 20 -recursion -o {GlobalEnv.fuzzing_folder}/ffuf.json'
+        return f'''ffuf -u {url} \
+                -w {GlobalEnv.ffuf_wordlist} \
+                -p 2 \
+                -r \
+                -rate 15 \
+                -timeout 10 \
+                -t 1 \
+                -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" \
+                -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+                -H "Accept-Language: en-US,en;q=0.5" \
+                -H "Connection: keep-alive" \
+                -H "Upgrade-Insecure-Requests: 1" \
+                -recursion \
+                -recursion-depth 2 \
+                -fs 0 \
+                -o {GlobalEnv.fuzzing_folder}/ffuf.json \
+                -of json'''
         
 
     def __commands(self, url):
